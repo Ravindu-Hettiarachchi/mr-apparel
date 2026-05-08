@@ -108,6 +108,24 @@ export default function QuotePage() {
     timeline,
   };
 
+  const WA_NUMBER = '94704909218';
+
+  const waMessage = encodeURIComponent(
+    `Hi MR Apparel! I would like a formal quote for the following order:\n\n` +
+    `Garment: ${garment.label}\n` +
+    `Print Method: ${method.label}\n` +
+    `Print Location: ${location.label}\n` +
+    `Quantity: ${qty} pieces\n\n` +
+    `--- Pricing Estimate ---\n` +
+    `Base price/unit: ${fmtLKR(basePerUnit)}\n` +
+    (tier.discount > 0 ? `Volume discount (${tier.min}+ pcs): -${tier.discount}%\n` : '') +
+    `Final price/unit: ${fmtLKR(finalPerUnit)}\n` +
+    `Total estimate: ${fmtLKR(total)}\n` +
+    (totalSaved > 0 ? `You save: ${fmtLKR(totalSaved)}\n` : '') +
+    `Estimated production: ${timeline}\n\n` +
+    `Please confirm the final quote. Thank you!`
+  );
+
   return (
     <div className={styles.page}>
 
@@ -124,7 +142,7 @@ export default function QuotePage() {
             </p>
           </div>
           <a
-            href="https://wa.me/94771234567"
+            href={`https://wa.me/${WA_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.waBtn}
@@ -365,7 +383,7 @@ export default function QuotePage() {
               Get Formal Quote <FaArrowRight />
             </Link>
             <a
-              href={`https://wa.me/94771234567?text=Hi%2C%20I%27d%20like%20a%20quote%20for%20${summary.qty}x%20${encodeURIComponent(summary.garment)}%20with%20${encodeURIComponent(summary.method)}%20(${encodeURIComponent(summary.location)}).%20My%20estimate%20shows%20${encodeURIComponent(fmtLKR(summary.total))}.`}
+              href={`https://wa.me/${WA_NUMBER}?text=${waMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.waQuoteBtn}

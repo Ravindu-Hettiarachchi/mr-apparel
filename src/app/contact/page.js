@@ -27,7 +27,7 @@ const contactInfo = [
   {
     icon: <FaPhone />,
     title: 'Call Us',
-    details: ['+94 77 123 4567', '+94 11 234 5678'],
+    details: ['+94 70 490 9218'],
   },
   {
     icon: <FaEnvelope />,
@@ -185,7 +185,7 @@ export default function ContactPage() {
                         <input
                           type="tel"
                           name="phone"
-                          placeholder="+94 77 123 4567"
+                          placeholder="+94 70 490 9218"
                           value={formData.phone}
                           onChange={handleChange}
                           className={styles.formInput}
@@ -253,7 +253,7 @@ export default function ContactPage() {
                     for instant quotes and support.
                   </p>
                   <a
-                    href="https://wa.me/94771234567"
+                    href="https://wa.me/94704909218"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.whatsappBtn}

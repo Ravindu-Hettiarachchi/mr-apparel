@@ -63,8 +63,8 @@ export default function Footer() {
             <a href="mailto:info@mrapparel.com" className="footer-link">
               info@mrapparel.com
             </a>
-            <a href="tel:+94771234567" className="footer-link">
-              +94 77 123 4567
+            <a href="tel:+94704909218" className="footer-link">
+              +94 70 490 9218
             </a>
             <p className="footer-link" style={{ cursor: 'default', marginTop: '10px' }}>
               Mon - Sat: 9AM - 6PM
