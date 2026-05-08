@@ -1,0 +1,240 @@
+/* ============================
+   PAGE HERO (shared pattern)
+   ============================ */
+.pageHero {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pageHeroBg {
+  position: absolute;
+  inset: 0;
+}
+
+.pageHeroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+}
+
+.pageHeroContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+/* ============================
+   WORKS SECTION
+   ============================ */
+.worksSection {
+  background: var(--dark-900);
+}
+
+.filterBar {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 12px 28px;
+  font-family: var(--font-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gray-200);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.filterBtn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filterActive {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--black);
+  font-weight: 700;
+}
+
+.filterActive:hover {
+  color: var(--black);
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.projectCard {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.projectImage {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.projectImage img {
+  transition: transform var(--transition-slow);
+}
+
+.projectCard:hover .projectImage img {
+  transform: scale(1.08);
+}
+
+.projectOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 20%, rgba(0, 0, 0, 0.9));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.projectCard:hover .projectOverlay {
+  opacity: 1;
+}
+
+.projectCat {
+  font-family: var(--font-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.projectTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.projectViewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary);
+  font-family: var(--font-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ============================
+   LIGHTBOX
+   ============================ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.lightboxContent {
+  background: var(--dark-800);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  position: relative;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 1rem;
+  z-index: 5;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.lightboxClose:hover {
+  background: var(--primary);
+  color: var(--black);
+}
+
+.lightboxImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.lightboxInfo {
+  padding: 32px;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+@media (max-width: 1024px) {
+  .projectGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .pageHero {
+    height: 50vh;
+    min-height: 300px;
+  }
+
+  .projectGrid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .filterBar {
+    gap: 8px;
+  }
+
+  .filterBtn {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+  }
+
+  .lightbox {
+    padding: 20px;
+  }
+}
