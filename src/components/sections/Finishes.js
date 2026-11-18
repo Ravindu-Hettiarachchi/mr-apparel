@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView, useScroll, useMotionValueEvent, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MdArrowForward } from 'react-icons/md';
 import { useContent } from '@/lib/content';
 import { Reveal, SplitWords } from '@/components/Motion';
@@ -102,52 +101,63 @@ function Visual({ t }) {
   return <PhotoVisual src="/images/works-showcase.jpg" alt={t.name} />;
 }
 
-/* ---------- section ---------- */
+/* ---------- section: 2x2 grid that animates in as you scroll (no pinning) ---------- */
+function FinishCard({ t, i }) {
+  return (
+    <motion.article
+      className="fcard"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.25 }}
+      variants={{
+        hidden: { opacity: 0, y: 60 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.9, delay: (i % 2) * 0.12, ease: EASE } },
+      }}
+    >
+      <motion.div
+        className="fcard-visual"
+        variants={{
+          hidden: { clipPath: 'polygon(0% 0%, 0% 0%, -20% 100%, -20% 100%)' },
+          show: { clipPath: 'polygon(0% 0%, 120% 0%, 100% 100%, -20% 100%)', transition: { duration: 1.1, delay: 0.15 + (i % 2) * 0.12, ease: [0.76, 0, 0.24, 1] } },
+        }}
+      >
+        <Visual t={t} />
+        <span className="fin-badge">0{i + 1}</span>
+      </motion.div>
+      <div className="fcard-body">
+        <h3 className="h2">{t.name}</h3>
+        <p>{t.text}</p>
+        <div className="fin-meta">
+          <span>Best for: {t.best}</span>
+          <span>Lasts: {t.durability}</span>
+        </div>
+        <div className="fin-scores">
+          {Object.entries(t.scores || {}).map(([k, v], j) => (
+            <div key={k} className="fin-score">
+              <div className="fin-score-row">
+                <span>{SCORE_LABELS[k] || k}</span>
+                <span>{v}</span>
+              </div>
+              <div className="fin-track">
+                <motion.div
+                  className="fin-fill"
+                  variants={{ hidden: { scaleX: 0 }, show: { scaleX: v / 100, transition: { delay: 0.5 + j * 0.08, duration: 1, ease: EASE } } }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <a href="#quote" className="link">
+          Get a quote for {t.name.toLowerCase()} <MdArrowForward />
+        </a>
+      </div>
+    </motion.article>
+  );
+}
+
 export default function Finishes() {
   const c = useContent();
   const list = c.techniques || [];
-  const n = list.length;
-  const [active, setActive] = useState(0);
-  const [narrow, setNarrow] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const wrap = useRef(null);
-  const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.4 });
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 900px)');
-    const on = () => setNarrow(mq.matches);
-    on();
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-
-  // Desktop: the section pins and scroll position picks the open finish.
-  const { scrollYProgress } = useScroll({ target: wrap, offset: ['start start', 'end end'] });
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    if (narrow || !n) return;
-    const idx = Math.min(n - 1, Math.max(0, Math.floor(v * n * 0.999)));
-    setActive((a) => (a === idx ? a : idx));
-  });
-  const local = useTransform(scrollYProgress, (v) => Math.min(1, Math.max(0, v * n - active)));
-
-  const goTo = (i) => {
-    if (narrow || !wrap.current) return setActive(i);
-    const el = wrap.current;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const span = el.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: top + span * ((i + 0.08) / n), behavior: 'smooth' });
-  };
-
-  // Phones: tap to open, with gentle auto-advance while visible.
-  useEffect(() => {
-    if (!narrow || !inView || paused || n < 2) return;
-    const t = setTimeout(() => setActive((a) => (a + 1) % n), 6000);
-    return () => clearTimeout(t);
-  }, [narrow, active, inView, paused, n]);
-
-  const cur = list[active];
-
   return (
     <section className="section" id="finishes" data-theme="light" style={{ background: 'var(--surface-1)' }}>
       <div className="container">
@@ -164,110 +174,11 @@ export default function Finishes() {
             </p>
           </Reveal>
         </div>
-
-        <div className="fin-scroll" ref={wrap} style={narrow ? undefined : { height: `${n * 80 + 20}vh` }}>
-          <div className="fin-sticky">
-          <motion.div
-            className="fin"
-            ref={ref}
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: false, amount: 0.25 }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
-          >
-            {list.map((t, i) => {
-              const on = i === active;
-              return (
-                <motion.div
-                  key={t.name}
-                  layout
-                  className={`fin-panel ${on ? 'on' : ''}`}
-                  variants={{
-                    hidden: { opacity: 0, y: 70, scale: 0.96 },
-                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.9, ease: EASE } },
-                  }}
-                  onClick={() => !on && goTo(i)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && goTo(i)}
-                  role="button"
-                  tabIndex={0}
-                  aria-expanded={on}
-                  transition={{ layout: { duration: 0.7, ease: EASE } }}
-                >
-                  {/* collapsed tab */}
-                  <div className="fin-tab">
-                    <span className="fin-num">0{i + 1}</span>
-                    <span className="fin-tab-name">{t.name}</span>
-                  </div>
-
-                  {/* expanded content */}
-                  <AnimatePresence>
-                    {on && (
-                      <motion.div
-                        className="fin-body"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                        transition={{ duration: 0.5, delay: 0.25 }}
-                      >
-                        <div className="fin-visual">
-                          <Visual t={t} />
-                          <span className="fin-badge">0{i + 1} / 0{list.length}</span>
-                        </div>
-                        <div className="fin-info">
-                          <motion.h3 className="h2" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35, duration: 0.6, ease: EASE }}>
-                            {t.name}
-                          </motion.h3>
-                          <motion.p initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.45, duration: 0.6, ease: EASE }}>
-                            {t.text}
-                          </motion.p>
-                          <div className="fin-meta">
-                            <span>Best for: {t.best}</span>
-                            <span>Lasts: {t.durability}</span>
-                          </div>
-                          <div className="fin-scores">
-                            {Object.entries(t.scores || {}).map(([k, v], j) => (
-                              <div key={k} className="fin-score">
-                                <div className="fin-score-row">
-                                  <span>{SCORE_LABELS[k] || k}</span>
-                                  <span>{v}</span>
-                                </div>
-                                <div className="fin-track">
-                                  <motion.div className="fin-fill" initial={{ scaleX: 0 }} animate={{ scaleX: v / 100 }} transition={{ delay: 0.5 + j * 0.08, duration: 1, ease: EASE }} />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                          <a href="#quote" className="link" onClick={(e) => e.stopPropagation()}>
-                            Get a quote for {t.name.toLowerCase()} <MdArrowForward />
-                          </a>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* progress: follows scroll on desktop, timer on phones */}
-                  {on && !narrow && <motion.span className="fin-progress" style={{ scaleX: local }} />}
-                  {on && narrow && inView && !paused && n > 1 && (
-                    <motion.span key={`p${active}`} className="fin-progress" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 6, ease: 'linear' }} />
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-          {!narrow && (
-            <div className="fin-dots" aria-hidden>
-              {list.map((t, i) => (
-                <button key={t.name} className={i === active ? 'on' : ''} onClick={() => goTo(i)} tabIndex={-1}>
-                  <span />
-                </button>
-              ))}
-            </div>
-          )}
-          </div>
+        <div className="fgrid">
+          {list.map((t, i) => (
+            <FinishCard key={t.name} t={t} i={i} />
+          ))}
         </div>
-        {cur && <span className="sr-only">Showing {cur.name}</span>}
       </div>
     </section>
   );

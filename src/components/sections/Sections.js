@@ -5,8 +5,6 @@ import { AnimatePresence, motion, useScroll } from 'framer-motion';
 import { useRange } from '@/components/Motion';
 import {
   MdArrowForward,
-  MdChevronLeft,
-  MdChevronRight,
   MdCheck,
   MdAdd,
   MdBusinessCenter,
@@ -17,9 +15,8 @@ import {
   MdVolunteerActivism,
   MdStar,
 } from 'react-icons/md';
-import { useContent } from '@/lib/content';
+import { useContent, waLink } from '@/lib/content';
 import { Reveal, Stagger, Item, SplitWords, ScrubText, CountUp } from '@/components/Motion';
-import Silhouette, { kindFor } from '@/components/Silhouette';
 import FadeImg from '@/components/FadeImg';
 
 const ICONS = {
@@ -35,7 +32,7 @@ const EASE = [0.16, 1, 0.3, 1];
 /* ---------------- Marquee ---------------- */
 export function Marquee() {
   const c = useContent();
-  const words = [...c.audiences.map((a) => a.title), ...c.techniques.map((t) => t.name), 'Polo shirts', 'Bulk orders'];
+  const words = ['Free mock-up', 'Sample before bulk', ...c.techniques.map((t) => t.name), 'Pantone colour match', 'From 10 pieces', 'Island-wide delivery'];
   return (
     <div className="marquee" data-theme="light" aria-hidden>
       <div className="marquee-track">
@@ -87,57 +84,106 @@ export function Audiences() {
   );
 }
 
-/* ---------------- Garments rail ---------------- */
+/* ---------------- The Range — store-style product grid ---------------- */
+function ProductCard({ g, wa }) {
+  const variants = g.variants?.length ? g.variants : [{ name: '', hex: g.color || '#ccc', image: g.image }];
+  const [sel, setSel] = useState(0);
+  const [hover, setHover] = useState(null);
+  const v = variants[hover ?? sel];
+  const msg = `Hi! I'm interested in the ${g.name}${v.name ? ` in ${v.name}` : ''}. Could you send me a quote?`;
+  return (
+    <div className="product">
+      <div className="p-media">
+        {g.tag && <span className="p-tag">{g.tag}</span>}
+        <AnimatePresence initial={false}>
+          <motion.img
+            key={v.image}
+            src={v.image}
+            alt={`${g.name}${v.name ? ` — ${v.name}` : ''}`}
+            loading="lazy"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.45, ease: EASE }}
+          />
+        </AnimatePresence>
+        <a className="p-quick" href={waLink(wa, msg)} target="_blank" rel="noreferrer">
+          Enquire on WhatsApp
+        </a>
+      </div>
+      <div className="p-info">
+        <div className="p-row">
+          <h3 className="p-name">{g.name}</h3>
+          <span className="p-price">From {g.from?.replace(/^From\s*/i, '')}</span>
+        </div>
+        <p className="p-fabric">{g.fabric}</p>
+        {variants.length > 1 && (
+          <div className="p-swatches" onMouseLeave={() => setHover(null)}>
+            {variants.map((vv, k) => (
+              <button
+                key={vv.name + k}
+                className="p-sw"
+                style={{ background: vv.hex }}
+                aria-label={vv.name}
+                aria-pressed={k === sel}
+                onMouseEnter={() => setHover(k)}
+                onClick={() => setSel(k)}
+              />
+            ))}
+            <span className="p-color">{v.name}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function Garments() {
   const c = useContent();
-  const rail = useRef(null);
-  const scroll = (d) => rail.current?.scrollBy({ left: d * 360, behavior: 'smooth' });
+  const cats = ['All', ...Array.from(new Set(c.garments.map((g) => g.category).filter(Boolean)))];
+  const [cat, setCat] = useState('All');
+  const list = c.garments.filter((g) => cat === 'All' || g.category === cat);
   return (
-    <section className="section" id="garments" data-theme="light" style={{ background: 'var(--surface-1)' }}>
+    <section className="section" id="garments" data-theme="light" style={{ paddingTop: 0 }}>
       <div className="container">
-        <div className="section-head split">
+        <div className="section-head split" style={{ marginBottom: 28 }}>
           <div>
             <Reveal>
               <p className="eyebrow">The range</p>
             </Reveal>
-            <SplitWords as="h2" className="h1" text="Polos first. Everything else, too." />
+            <SplitWords as="h2" className="h1" text="Pick your garment. We'll make it yours." />
           </div>
-          <Reveal className="rail-nav">
-            <button className="icon-btn" aria-label="Previous" onClick={() => scroll(-1)}>
-              <MdChevronLeft size={26} />
-            </button>
-            <button className="icon-btn" aria-label="Next" onClick={() => scroll(1)}>
-              <MdChevronRight size={26} />
-            </button>
+          <Reveal>
+            <p className="lead" style={{ maxWidth: 380, marginTop: 0 }}>
+              Every style comes in your choice of colours, with your logo embroidered or printed.
+            </p>
           </Reveal>
         </div>
-        <div className="rail" ref={rail}>
-          {c.garments.map((g, i) => (
-            <motion.article
-              key={i}
-              className="g-card"
-              initial={{ opacity: 0, x: 80 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.9, delay: i * 0.06, ease: EASE }}
-            >
-              <div className="g-visual" style={{ background: `radial-gradient(80% 70% at 50% 40%, #fff, ${g.color}22)` }}>
-                {g.image ? <FadeImg src={g.image} alt={g.name} loading="lazy" wrapClass="fill" /> : <Silhouette kind={kindFor(g.name)} color={g.color} />}
-                {g.tag && <span className="g-tag">{g.tag}</span>}
-              </div>
-              <div className="g-body">
-                <h3 className="h3">{g.name}</h3>
-                <p>{g.fabric}</p>
-                <div className="g-foot">
-                  <span className="g-price">From {g.from}</span>
-                  <a className="link" href="#quote">
-                    Quote <MdArrowForward />
-                  </a>
-                </div>
-              </div>
-            </motion.article>
+        <div className="shop-tabs" role="tablist">
+          {cats.map((k) => (
+            <button key={k} role="tab" aria-selected={cat === k} onClick={() => setCat(k)}>
+              {k}
+              {cat === k && <motion.span layoutId="shop-tab" className="tab-line" />}
+            </button>
           ))}
         </div>
+        <motion.div layout className="products">
+          <AnimatePresence mode="popLayout">
+            {list.map((g, i) => (
+              <motion.div
+                key={g.name}
+                layout
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.8, delay: (i % 3) * 0.08, ease: EASE }}
+              >
+                <ProductCard g={g} wa={c.contact.whatsapp} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

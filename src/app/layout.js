@@ -1,9 +1,9 @@
-import { Inter, Inter_Tight } from 'next/font/google';
+import { Inter, Archivo } from 'next/font/google';
 import './globals.css';
 import site from '@/content/site.json';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
-const display = Inter_Tight({ subsets: ['latin'], variable: '--font-display-face', display: 'swap', weight: ['500', '600', '700', '800'] });
+const display = Archivo({ subsets: ['latin'], variable: '--font-display-face', display: 'swap', axes: ['wdth'] });
 
 const title = `${site.brand.name} — Custom Polo Shirts & T-Shirts for Corporates and Events`;
 
