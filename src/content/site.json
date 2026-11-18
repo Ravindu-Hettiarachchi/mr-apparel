@@ -26,19 +26,19 @@
       {
         "kicker": "Fabric",
         "title": "220 GSM piqué cotton.",
-        "text": "A breathable honeycomb knit that holds its shape wash after wash.",
+        "text": "A breathable honeycomb knit that holds its shape, wash after wash.",
         "color": "#1d2a44"
       },
       {
-        "kicker": "Detail",
-        "title": "Collars that stay crisp.",
-        "text": "Flat-knit collars and cuffs with optional contrast tipping in your brand colours.",
+        "kicker": "Construction",
+        "title": "Every detail, engineered.",
+        "text": "Flat-knit collar with contrast tipping, a reinforced 3-button placket and ribbed cuffs, all made to match your brand.",
         "color": "#f4f4f2"
       },
       {
-        "kicker": "Finish",
-        "title": "Your logo, to the thread.",
-        "text": "Embroidery, DTF and screen print, matched to your brand colours.",
+        "kicker": "Colour",
+        "title": "Your colours. Exactly.",
+        "text": "Pantone-matched fabric, tipping and thread across every size in your order.",
         "color": "#0f6b4f"
       }
     ]
@@ -104,7 +104,7 @@
       "from": "LKR 2,200",
       "tag": "Most ordered",
       "color": "#1d2a44",
-      "image": ""
+      "image": "/images/range/signature-polo.webp"
     },
     {
       "name": "Executive Polo",
@@ -112,7 +112,7 @@
       "from": "LKR 2,800",
       "tag": "Premium",
       "color": "#2b2b2b",
-      "image": ""
+      "image": "/images/range/executive-polo.webp"
     },
     {
       "name": "Dri-Fit Polo",
@@ -120,7 +120,7 @@
       "from": "LKR 1,900",
       "tag": "Sports",
       "color": "#0f6b4f",
-      "image": ""
+      "image": "/images/range/drifit-polo.webp"
     },
     {
       "name": "Crew Neck Tee",
@@ -128,7 +128,7 @@
       "from": "LKR 1,500",
       "tag": "Events",
       "color": "#b3261e",
-      "image": ""
+      "image": "/images/range/crew-tee.webp"
     },
     {
       "name": "Long Sleeve Polo",
@@ -136,15 +136,15 @@
       "from": "LKR 2,600",
       "tag": "Corporate",
       "color": "#f4f4f2",
-      "image": ""
+      "image": "/images/range/long-sleeve-polo.webp"
     },
     {
-      "name": "Hoodie",
-      "fabric": "Fleece, 320 GSM",
-      "from": "LKR 3,500",
-      "tag": "Merch",
-      "color": "#5b5b60",
-      "image": ""
+      "name": "Tipped Polo",
+      "fabric": "Cotton piqué, 220 GSM, contrast collar & cuffs",
+      "from": "LKR 2,500",
+      "tag": "Brand colours",
+      "color": "#8e9198",
+      "image": "/images/range/tipped-polo.webp"
     }
   ],
   "materials": [
@@ -276,56 +276,58 @@
       "title": "Executive Uniform Program",
       "category": "Corporate",
       "text": "Embroidered piqué polos for a 300-person team.",
-      "image": "/images/corporate-banner.jpg"
+      "image": "/images/corporate-banner.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     },
     {
       "title": "Urban Streetwear Launch",
       "category": "DTF",
       "text": "Full-colour DTF prints for a brand launch drop.",
-      "image": "/images/works-showcase.jpg"
+      "image": "/images/works-showcase.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     },
     {
       "title": "The Infinite Print Series",
       "category": "Sublimation",
       "text": "All-over sublimated polyester tees.",
-      "image": "/images/sublimation-showcase.jpg"
+      "image": "/images/sublimation-showcase.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     },
     {
       "title": "Event Crew Kits",
       "category": "Events",
       "text": "Crew and volunteer tees delivered in five days.",
-      "image": "/images/hero-banner.jpg"
+      "image": "/images/hero-banner.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     },
     {
       "title": "Retail Collection",
       "category": "Retail",
       "text": "Private-label tees for a retail partner.",
-      "image": "/images/store-product.jpg"
+      "image": "/images/store-product.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     },
     {
       "title": "DTF Production Run",
       "category": "DTF",
       "text": "High-detail transfers ready for pressing.",
-      "image": "/images/dtf-process.jpg"
+      "image": "/images/dtf-process.jpg",
+      "client": "",
+      "quantity": "",
+      "year": ""
     }
   ],
-  "testimonials": [
-    {
-      "quote": "The embroidery on our polos is spotless and the fabric still feels new after months of daily wear.",
-      "name": "Sarah Chen",
-      "role": "Marketing Director, TechCorp"
-    },
-    {
-      "quote": "Five hundred event tees, perfect colours, delivered a day early. They made our retreat effortless.",
-      "name": "James Wilson",
-      "role": "HR Manager, InnovateLK"
-    },
-    {
-      "quote": "They matched our brand colours exactly and sent a sample before production. Truly premium service.",
-      "name": "Priya Fernando",
-      "role": "Brand Strategist, CreativeHub"
-    }
-  ],
+  "testimonials": [],
   "faq": [
     {
       "q": "What is the minimum order quantity?",

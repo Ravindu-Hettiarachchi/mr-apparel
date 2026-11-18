@@ -6,10 +6,10 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 
 /* ------------------------------------------------------------------
-   Realistic polo modelled in Blender (see /blender). The GLB carries
-   three meshes — Fabric, Rib (collar + cuffs) and Buttons — with
-   ambient occlusion baked into vertex colours, so any fabric colour
-   still gets soft shadows in the folds.
+   Realistic polo modelled in Blender (see /blender). Parts:
+   Fabric, Collar, CuffL/CuffR (rib knit), TipCollar/TipCuffL/TipCuffR
+   (tipping stripes), Buttons, Label. Ambient occlusion is baked into
+   vertex colours so any fabric colour keeps soft shadows in the folds.
 ------------------------------------------------------------------ */
 export const POLO_URL = '/models/polo.glb';
 
@@ -87,70 +87,85 @@ function isLight(hex) {
   return c.r * 0.299 + c.g * 0.587 + c.b * 0.114 > 0.6;
 }
 
-export default function PoloModel({ color = '#1d2a44', colorRef, tipColor, logoText = 'MR', spin = 0, ...props }) {
+
+
+// Exploded-view offsets per part (model units, model is 1.8 tall).
+const EXPLODE = {
+  Collar: [0, 0.22, 0.06],
+  TipCollar: [0, 0.33, 0.1],
+  Buttons: [0, 0.02, 0.5],
+  CuffL: [0.34, -0.2, 0.04],
+  TipCuffL: [0.5, -0.3, 0.06],
+  CuffR: [-0.34, -0.2, 0.04],
+  TipCuffR: [-0.5, -0.3, 0.06],
+  Label: [0, 0.14, -0.35],
+  Logo: [0, 0, 0.3],
+};
+const PARTS = ['Fabric', 'Collar', 'CuffL', 'CuffR', 'TipCollar', 'TipCuffL', 'TipCuffR', 'Buttons', 'Label'];
+
+/**
+ * props: color, colorRef (animated colour), tipColor (stripe colour; defaults to body),
+ * explodeRef ({current: 0..1}), logoText, showLogo, spin
+ */
+export default function PoloModel({ color = '#1d2a44', colorRef, tipColor, tipRef, explodeRef, logoText = 'MR', showLogo = true, spin = 0, ...props }) {
   const group = useRef();
   const { nodes } = useGLTF(POLO_URL);
   const pique = useMemo(makePiqueNormal, []);
   const rib = useMemo(makeRibNormal, []);
 
   const mats = useMemo(() => {
-    const fabric = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color(color),
+    const base = {
       vertexColors: true,
-      roughness: 0.9,
       sheen: 1,
-      sheenRoughness: 0.55,
-      sheenColor: new THREE.Color(0.32, 0.32, 0.34),
-      normalMap: pique,
-      normalScale: new THREE.Vector2(0.45, 0.45),
-      side: THREE.DoubleSide,
-    });
-    if (pique) pique.repeat.set(70, 70);
-    const ribMat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color(tipColor || color),
-      vertexColors: true,
-      roughness: 0.85,
-      sheen: 1,
-      sheenRoughness: 0.45,
       sheenColor: new THREE.Color(0.3, 0.3, 0.32),
-      normalMap: rib,
-      normalScale: new THREE.Vector2(0.7, 0.7),
       side: THREE.DoubleSide,
-    });
+    };
+    if (pique) pique.repeat.set(70, 70);
     if (rib) rib.repeat.set(160, 4);
-    const button = new THREE.MeshPhysicalMaterial({ color: '#f1efe9', roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.15 });
-    return { fabric, rib: ribMat, button };
+    return {
+      fabric: new THREE.MeshPhysicalMaterial({ ...base, color: new THREE.Color(color), roughness: 0.9, sheenRoughness: 0.55, normalMap: pique, normalScale: new THREE.Vector2(0.45, 0.45) }),
+      rib: new THREE.MeshPhysicalMaterial({ ...base, color: new THREE.Color(color), roughness: 0.85, sheenRoughness: 0.45, normalMap: rib, normalScale: new THREE.Vector2(0.7, 0.7) }),
+      tip: new THREE.MeshPhysicalMaterial({ ...base, color: new THREE.Color(tipColor || color), roughness: 0.8, sheenRoughness: 0.4, normalMap: rib, normalScale: new THREE.Vector2(0.5, 0.5), polygonOffset: true, polygonOffsetFactor: -2 }),
+      button: new THREE.MeshPhysicalMaterial({ color: '#f1efe9', roughness: 0.25, clearcoat: 1, clearcoatRoughness: 0.15 }),
+      label: new THREE.MeshStandardMaterial({ color: '#efeee9', roughness: 0.7, side: THREE.DoubleSide }),
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pique, rib]);
 
-  const meshes = useMemo(() => {
-    const pick = (name) => Object.values(nodes).find((n) => n.isMesh && n.name.toLowerCase().startsWith(name));
-    return { fabric: pick('fabric'), rib: pick('rib'), buttons: pick('button') };
+  const parts = useMemo(() => {
+    const all = Object.values(nodes).filter((n) => n.isMesh);
+    const out = {};
+    PARTS.forEach((p) => {
+      out[p] = all.find((n) => n.name === p) || all.find((n) => n.name.startsWith(p));
+    });
+    return out;
   }, [nodes]);
 
-  // place the chest logo by raycasting onto the wearer's left chest
+  const matFor = (p) => (p === 'Fabric' ? mats.fabric : p.startsWith('Tip') ? mats.tip : p === 'Buttons' ? mats.button : p === 'Label' ? mats.label : mats.rib);
+
+  // chest logo placed by raycasting onto the wearer's left chest
   const logo = useMemo(() => {
-    const m = meshes.fabric;
+    const m = parts.Fabric;
     if (!m) return null;
     m.geometry.computeBoundingBox();
     const bb = m.geometry.boundingBox;
     const h = bb.max.y - bb.min.y;
-    const w = bb.max.x - bb.min.x;
-    const origin = new THREE.Vector3(bb.min.x + w * 0.66, bb.min.y + h * 0.74, bb.max.z + 1);
+    const origin = new THREE.Vector3(0.2, bb.min.y + h * 0.72, bb.max.z + 1);
     const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, 0, -1));
-    const tmp = new THREE.Mesh(m.geometry, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
-    const hit = ray.intersectObject(tmp)[0];
+    const hit = ray.intersectObject(new THREE.Mesh(m.geometry, new THREE.MeshBasicMaterial({ side: THREE.DoubleSide })))[0];
     if (!hit) return null;
     const n = hit.face.normal.clone();
-    const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n);
-    return { pos: hit.point.clone().add(n.multiplyScalar(0.006)), quat: q, size: w * 0.12 };
-  }, [meshes.fabric]);
+    return { pos: hit.point.clone().add(n.clone().multiplyScalar(0.006)), quat: new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n), size: 0.13 };
+  }, [parts.Fabric]);
 
   const logoTex = useMemo(() => makeLogoTexture(logoText || 'MR', '#ffffff'), [logoText]);
+  const refs = useRef({});
+  const logoGroup = useRef();
   const logoMat = useRef();
   const target = useRef(new THREE.Color(color));
   const tipTarget = useRef(new THREE.Color(tipColor || color));
   const logoTarget = useRef(new THREE.Color());
+  const ex = useRef(0);
 
   useEffect(() => {
     target.current.set(color);
@@ -158,28 +173,49 @@ export default function PoloModel({ color = '#1d2a44', colorRef, tipColor, logoT
   }, [color, tipColor]);
 
   useFrame((_, dt) => {
-    if (colorRef?.current) {
-      target.current.set(colorRef.current);
-      if (!tipColor) tipTarget.current.set(colorRef.current);
-    }
+    if (colorRef?.current) target.current.set(colorRef.current);
+    if (tipRef?.current) tipTarget.current.set(tipRef.current);
+    else if (!tipColor) tipTarget.current.copy(target.current);
     const k = 1 - Math.exp(-dt * 6);
     mats.fabric.color.lerp(target.current, k);
-    mats.rib.color.lerp(tipTarget.current, k);
+    mats.rib.color.lerp(target.current, k);
+    mats.tip.color.lerp(tipTarget.current, k);
     logoTarget.current.set(isLight('#' + target.current.getHexString()) ? '#1d2a44' : '#f4f4f2');
     if (logoMat.current) logoMat.current.color.lerp(logoTarget.current, k);
+
+    // exploded view
+    const want = explodeRef ? explodeRef.current : 0;
+    ex.current += (want - ex.current) * (1 - Math.exp(-dt * 5));
+    const e = ex.current;
+    Object.entries(refs.current).forEach(([name, obj]) => {
+      const o = EXPLODE[name];
+      if (obj && o) obj.position.set(o[0] * e, o[1] * e, o[2] * e);
+    });
+    if (logoGroup.current) logoGroup.current.position.set(0, 0, EXPLODE.Logo[2] * e);
     if (spin && group.current) group.current.rotation.y += dt * spin;
   });
 
   return (
     <group ref={group} {...props}>
-      {meshes.fabric && <mesh geometry={meshes.fabric.geometry} material={mats.fabric} castShadow receiveShadow />}
-      {meshes.rib && <mesh geometry={meshes.rib.geometry} material={mats.rib} castShadow />}
-      {meshes.buttons && <mesh geometry={meshes.buttons.geometry} material={mats.button} />}
-      {logo && logoTex && (
-        <mesh position={logo.pos} quaternion={logo.quat}>
-          <planeGeometry args={[logo.size, logo.size]} />
-          <meshStandardMaterial ref={logoMat} map={logoTex} transparent roughness={0.6} polygonOffset polygonOffsetFactor={-4} depthWrite={false} />
-        </mesh>
+      {PARTS.map((p) =>
+        parts[p] ? (
+          <mesh
+            key={p}
+            ref={(r) => (refs.current[p] = r)}
+            geometry={parts[p].geometry}
+            material={matFor(p)}
+            castShadow={p === 'Fabric' || p === 'Collar'}
+            receiveShadow={p === 'Fabric'}
+          />
+        ) : null
+      )}
+      {showLogo && logo && logoTex && (
+        <group ref={logoGroup}>
+          <mesh position={logo.pos} quaternion={logo.quat}>
+            <planeGeometry args={[logo.size, logo.size]} />
+            <meshStandardMaterial ref={logoMat} map={logoTex} transparent roughness={0.6} polygonOffset polygonOffsetFactor={-4} depthWrite={false} />
+          </mesh>
+        </group>
       )}
     </group>
   );

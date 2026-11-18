@@ -36,12 +36,18 @@ const SECTIONS = [
   ['techniques', 'Finishes'],
   ['quality', 'Quality'],
   ['colorways', 'Studio colours'],
-  ['works', 'Portfolio'],
+  ['works', 'Our work (portfolio)'],
   ['process', 'Process'],
   ['testimonials', 'Testimonials'],
   ['faq', 'FAQ'],
   ['settings', 'Settings & publish'],
 ];
+
+const TEMPLATES = {
+  testimonials: { quote: '', name: '', role: '' },
+  works: { title: '', client: '', category: '', quantity: '', year: '', text: '', image: '' },
+  faq: { q: '', a: '' },
+};
 
 const LONG = ['text', 'quote', 'a', 'description', 'subtitle', 'title', 'q'];
 const pretty = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
@@ -204,7 +210,7 @@ function ArrayEditor({ name, value, onChange, template }) {
           </div>
         </details>
       ))}
-      <button className="a-btn a-btn-tonal" onClick={() => onChange([...value, tpl ? blank(tpl) : ''])}>
+      <button className="a-btn a-btn-tonal" onClick={() => onChange([...value, tpl ? (template ? clone(template) : blank(tpl)) : ''])}>
         <MdAdd /> Add {name ? pretty(name).replace(/s$/, '').toLowerCase() : 'item'}
       </button>
     </div>
@@ -498,7 +504,7 @@ export default function AdminPage() {
               </section>
             </div>
           ) : Array.isArray(data[tab]) ? (
-            <ArrayEditor value={data[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} />
+            <ArrayEditor value={data[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} template={TEMPLATES[tab]} />
           ) : (
             <ObjectEditor value={data[tab]} onChange={(v) => setData({ ...data, [tab]: v })} />
           )}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useScroll, useSpring } from 'framer-motion';
 import { MdMenu, MdClose } from 'react-icons/md';
 import { useContent, waLink } from '@/lib/content';
 
@@ -11,7 +11,7 @@ const LINKS = [
   ['Finishes', '#finishes'],
   ['Quality', '#quality'],
   ['Studio', '#studio'],
-  ['Work', '#work'],
+  ['Our work', '#work'],
   ['Contact', '#quote'],
 ];
 
@@ -19,38 +19,44 @@ export default function Nav() {
   const c = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [light, setLight] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState('');
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 30, mass: 0.3 });
 
   useEffect(() => {
-    let last = window.scrollY;
     const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 10);
-      setHidden(y > last && y > 600 && !open);
-      last = y;
-      const el = document.elementsFromPoint(window.innerWidth / 2, 30).find((n) => n.closest?.('[data-theme]'));
-      const theme = el?.closest('[data-theme]')?.getAttribute('data-theme');
-      setLight(theme === 'light');
+      setScrolled(window.scrollY > 40);
+      const el = document.elementsFromPoint(window.innerWidth / 2, 34).find((n) => n.closest?.('[data-theme]'));
+      setLight(el?.closest('[data-theme]')?.getAttribute('data-theme') === 'light');
+      // highlight the section currently under the nav
+      let cur = '';
+      LINKS.forEach(([, h]) => {
+        const s = document.querySelector(h);
+        if (s && s.getBoundingClientRect().top < 140) cur = h;
+      });
+      setActive(cur);
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [open]);
+  }, []);
 
   return (
     <>
-      <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${light || open ? 'is-light' : ''} ${hidden ? 'is-hidden' : ''}`}>
-        <div className="nav-bg" />
+      <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${light || open ? 'is-light' : ''}`}>
         <div className="nav-inner">
           <a href="#top" className="brand" aria-label={`${c.brand.name} home`}>
-            <span className="brand-mark">{c.brand.logoText}</span>
-            {c.brand.name}
+            <img src="/images/mr-logo-wide.png" alt="" className="brand-logo" width="48" height="25" />
+            <span className="brand-name">{c.brand.name.replace(/^MR\s*/i, '') || c.brand.name}</span>
           </a>
           <ul className="nav-links">
             {LINKS.map(([l, h]) => (
               <li key={h}>
-                <a href={h}>{l}</a>
+                <a href={h} className={active === h ? 'on' : ''}>
+                  {l}
+                  {active === h && <motion.span layoutId="nav-dot" className="nav-dot" transition={{ type: 'spring', stiffness: 500, damping: 36 }} />}
+                </a>
               </li>
             ))}
           </ul>
@@ -65,17 +71,12 @@ export default function Nav() {
           <button className="nav-burger" aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen((o) => !o)}>
             {open ? <MdClose size={24} /> : <MdMenu size={24} />}
           </button>
+          <motion.div className="nav-progress" style={{ scaleX: progress }} />
         </div>
       </header>
       <AnimatePresence>
         {open && (
-          <motion.nav
-            className="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+          <motion.nav className="mobile-menu" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
             {LINKS.map(([l, h], i) => (
               <motion.a
                 key={h}

@@ -390,7 +390,7 @@ export function Works() {
             <Reveal>
               <p className="eyebrow">Recent work</p>
             </Reveal>
-            <SplitWords as="h2" className="h1" text="Made for teams like yours." />
+            <SplitWords as="h2" className="h1" text="Real work, for real teams." />
           </div>
           <Reveal className="chips">
             {cats.map((k) => (
@@ -417,8 +417,9 @@ export function Works() {
               >
                 {w.image && <img src={w.image} alt={w.title} loading="lazy" />}
                 <div className="work-meta">
-                  <small>{w.category}</small>
+                  <small>{[w.category, w.year].filter(Boolean).join(' · ')}</small>
                   <h3 className="h3">{w.title}</h3>
+                  {(w.client || w.quantity) && <p className="work-sub">{[w.client, w.quantity && `${w.quantity} pcs`].filter(Boolean).join(' — ')}</p>}
                 </div>
               </motion.button>
             ))}
@@ -432,6 +433,9 @@ export function Works() {
               <img src={open.image} alt={open.title} />
               <div className="cap">
                 <h3 className="h3">{open.title}</h3>
+                {(open.client || open.quantity || open.year) && (
+                  <p style={{ opacity: 0.85, margin: '6px 0 0', fontWeight: 500 }}>{[open.client, open.quantity && `${open.quantity} pieces`, open.year].filter(Boolean).join(' · ')}</p>
+                )}
                 <p style={{ opacity: 0.7, margin: '6px 0 0' }}>{open.text}</p>
               </div>
             </motion.div>
