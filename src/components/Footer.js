@@ -1,92 +1,121 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { FaInstagram, FaFacebookF, FaTiktok, FaWhatsapp } from 'react-icons/fa';
+import { FaWhatsapp } from 'react-icons/fa';
+import { MdArrowForward } from 'react-icons/md';
+import { motion } from 'framer-motion';
+import { useContent, waLink } from '@/lib/content';
+import { Reveal, SplitWords } from '@/components/Motion';
+import { SocialLinks } from '@/components/sections/Quote';
+
+export function CtaBand() {
+  const c = useContent();
+  return (
+    <section className="section" data-theme="light" style={{ paddingTop: 0 }}>
+      <div className="container">
+        <Reveal scale={0.94} y={40}>
+          <div className="cta-band" data-theme="dark">
+            <SplitWords as="h2" className="h1" text="Ready when your team is." />
+            <p className="lead" style={{ color: 'var(--on-dark-muted)', margin: '20px auto 0' }}>
+              Share your logo and quantity. We&apos;ll send a mock-up and price today.
+            </p>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 36 }}>
+              <a className="btn btn-lg btn-light" href="#quote">
+                Request a quote <MdArrowForward />
+              </a>
+              <a className="btn btn-lg btn-wa" href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}!`)} target="_blank" rel="noreferrer">
+                <FaWhatsapp size={20} /> WhatsApp us
+              </a>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+export function Fab() {
+  const c = useContent();
+  return (
+    <motion.a
+      className="fab"
+      href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}! I'd like a quote.`)}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Chat on WhatsApp"
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 1.6, type: 'spring', stiffness: 300, damping: 22 }}
+    >
+      <FaWhatsapp size={26} />
+      <span>Chat with us</span>
+    </motion.a>
+  );
+}
 
 export default function Footer() {
+  const c = useContent();
+  const year = new Date().getFullYear();
   return (
-    <footer className="footer">
+    <footer className="footer" data-theme="light">
       <div className="container">
         <div className="footer-grid">
           <div>
-            <Link href="/" className="navbar-logo" style={{ marginBottom: '6px' }}>
-              <Image
-                src="/images/mrlogo.png"
-                alt="MR Apparel logo"
-                width={42}
-                height={42}
-                style={{ objectFit: 'contain', height: '42px', width: '42px' }}
-              />
-              <span>
-                MR <span style={{ color: 'var(--primary)' }}>Apparel</span>
-              </span>
-            </Link>
-            <p style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.12em', color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '12px' }}>
-              Designed to Be Different
-            </p>
-            <p className="footer-brand-desc">
-              Premium custom clothing solutions for corporate teams, events, and brands.
-              Specializing in DTF printing, sublimation, and custom apparel that makes a statement.
-            </p>
-            <div className="footer-social">
-              <a href="#" aria-label="Instagram"><FaInstagram /></a>
-              <a href="#" aria-label="Facebook"><FaFacebookF /></a>
-              <a href="#" aria-label="TikTok"><FaTiktok /></a>
-              <a href="#" aria-label="WhatsApp"><FaWhatsapp /></a>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="footer-heading">Quick Links</h4>
-            <Link href="/" className="footer-link">Home</Link>
-            <Link href="/works" className="footer-link">Our Works</Link>
-            <Link href="/store" className="footer-link">Store</Link>
-            <Link href="/matching" className="footer-link">Quick Quote</Link>
-            <Link href="/contact" className="footer-link">Contact Us</Link>
-          </div>
-
-          <div>
-            <h4 className="footer-heading">Services</h4>
-            <span className="footer-link">DTF Printing</span>
-            <span className="footer-link">Sublimation</span>
-            <span className="footer-link">Corporate Uniforms</span>
-            <span className="footer-link">Custom Designs</span>
-            <span className="footer-link">Bulk Orders</span>
-          </div>
-
-          <div>
-            <h4 className="footer-heading">Get In Touch</h4>
-            <p className="footer-link" style={{ cursor: 'default' }}>
-              Colombo, Sri Lanka
-            </p>
-            <a href="mailto:info@mrapparel.com" className="footer-link">
-              info@mrapparel.com
+            <a href="#top" className="brand" style={{ color: 'var(--ink)' }}>
+              <span className="brand-mark">{c.brand.logoText}</span>
+              {c.brand.name}
             </a>
-            <a href="tel:+94704909218" className="footer-link">
-              +94 70 490 9218
-            </a>
-            <p className="footer-link" style={{ cursor: 'default', marginTop: '10px' }}>
-              Mon - Sat: 9AM - 6PM
-            </p>
+            <p style={{ maxWidth: 340, margin: '16px 0 20px' }}>{c.brand.description}</p>
+            <SocialLinks socials={c.socials} />
+          </div>
+          <div>
+            <h5>Products</h5>
+            <ul>
+              {c.garments.slice(0, 5).map((g) => (
+                <li key={g.name}>
+                  <a href="#garments">{g.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h5>Finishes</h5>
+            <ul>
+              {c.techniques.map((t) => (
+                <li key={t.name}>
+                  <a href="#finishes">{t.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h5>Contact</h5>
+            <ul>
+              <li>
+                <a href={waLink(c.contact.whatsapp)} target="_blank" rel="noreferrer">
+                  WhatsApp
+                </a>
+              </li>
+              <li>
+                <a href={`tel:+${c.contact.whatsapp}`}>{c.contact.phoneDisplay}</a>
+              </li>
+              <li>
+                <a href={`mailto:${c.contact.email}`}>{c.contact.email}</a>
+              </li>
+              <li>{c.contact.address}</li>
+            </ul>
           </div>
         </div>
-
         <div className="footer-bottom">
-          <p>© 2026 MR Apparel. All rights reserved.</p>
-          <p style={{ fontSize: '0.85rem' }}>
-            Built by{' '}
-            <a
-              href="https://www.pixbeelabs.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'var(--primary)', fontWeight: 600, transition: 'opacity 0.2s' }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.75')}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-            >
-              Pixbee Labs
-            </a>
-          </p>
+          <span>
+            © {year} {c.brand.name}. {c.brand.tagline}
+          </span>
+          <span>
+            Crafted by{' '}
+            <a href="https://www.pixbeelabs.com" target="_blank" rel="noreferrer" style={{ color: 'var(--ink)' }}>
+              PixBee Labs
+            </a>{' '}
+            · <a href="/admin">Admin</a>
+          </span>
         </div>
       </div>
     </footer>

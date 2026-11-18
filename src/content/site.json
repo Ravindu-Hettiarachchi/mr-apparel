@@ -1,0 +1,391 @@
+{
+  "brand": {
+    "name": "MR Apparel",
+    "tagline": "Designed to be different.",
+    "logoText": "MR",
+    "description": "Custom polo shirts and t-shirts for corporates, events and teams. Premium fabrics, precise embroidery and prints, delivered on time across Sri Lanka."
+  },
+  "contact": {
+    "whatsapp": "94704909218",
+    "phoneDisplay": "+94 70 490 9218",
+    "email": "info@mrapparel.com",
+    "address": "Colombo 03, Sri Lanka",
+    "hours": "Mon – Sat, 9:00 AM – 6:00 PM"
+  },
+  "socials": {
+    "instagram": "https://instagram.com/",
+    "facebook": "https://facebook.com/",
+    "tiktok": "https://tiktok.com/",
+    "linkedin": ""
+  },
+  "hero": {
+    "eyebrow": "Custom polos for teams that show up",
+    "title": "Wear your brand.\nBeautifully.",
+    "subtitle": "Corporate and event polos, crafted from premium piqué cotton and finished with embroidery or print that lasts.",
+    "chapters": [
+      {
+        "kicker": "Fabric",
+        "title": "220 GSM piqué cotton.",
+        "text": "A breathable honeycomb knit that holds its shape wash after wash.",
+        "color": "#1d2a44"
+      },
+      {
+        "kicker": "Detail",
+        "title": "Collars that stay crisp.",
+        "text": "Flat-knit collars and cuffs with optional contrast tipping in your brand colours.",
+        "color": "#f4f4f2"
+      },
+      {
+        "kicker": "Finish",
+        "title": "Your logo, to the thread.",
+        "text": "Embroidery, DTF and screen print, matched to your brand colours.",
+        "color": "#0f6b4f"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": 500,
+      "suffix": "+",
+      "label": "Projects delivered"
+    },
+    {
+      "value": 50,
+      "suffix": "+",
+      "label": "Corporate clients"
+    },
+    {
+      "value": 10000,
+      "suffix": "+",
+      "label": "Garments made"
+    },
+    {
+      "value": 99,
+      "suffix": "%",
+      "label": "On-time delivery"
+    }
+  ],
+  "audiences": [
+    {
+      "title": "Corporate uniforms",
+      "text": "Everyday staff polos that look sharp from the front desk to the field.",
+      "icon": "briefcase"
+    },
+    {
+      "title": "Events & launches",
+      "text": "Event crew, promoters and VIP merch, ready on your date.",
+      "icon": "spark"
+    },
+    {
+      "title": "Sports & clubs",
+      "text": "Moisture-wicking team kits with names and numbers.",
+      "icon": "trophy"
+    },
+    {
+      "title": "Schools & batches",
+      "text": "Batch tees, house colours and reunion polos.",
+      "icon": "cap"
+    },
+    {
+      "title": "Hospitality",
+      "text": "Durable, easy-care uniforms for hotels, cafés and resorts.",
+      "icon": "cup"
+    },
+    {
+      "title": "Campaigns & NGOs",
+      "text": "Bulk tees for awareness drives, runs and volunteers.",
+      "icon": "heart"
+    }
+  ],
+  "garments": [
+    {
+      "name": "Signature Polo",
+      "fabric": "Cotton piqué, 220 GSM",
+      "from": "LKR 2,200",
+      "tag": "Most ordered",
+      "color": "#1d2a44",
+      "image": ""
+    },
+    {
+      "name": "Executive Polo",
+      "fabric": "Mercerised cotton, 240 GSM",
+      "from": "LKR 2,800",
+      "tag": "Premium",
+      "color": "#2b2b2b",
+      "image": ""
+    },
+    {
+      "name": "Dri-Fit Polo",
+      "fabric": "Polyester mesh, 160 GSM",
+      "from": "LKR 1,900",
+      "tag": "Sports",
+      "color": "#0f6b4f",
+      "image": ""
+    },
+    {
+      "name": "Crew Neck Tee",
+      "fabric": "Combed cotton, 180 GSM",
+      "from": "LKR 1,500",
+      "tag": "Events",
+      "color": "#b3261e",
+      "image": ""
+    },
+    {
+      "name": "Long Sleeve Polo",
+      "fabric": "Cotton piqué, 220 GSM",
+      "from": "LKR 2,600",
+      "tag": "Corporate",
+      "color": "#f4f4f2",
+      "image": ""
+    },
+    {
+      "name": "Hoodie",
+      "fabric": "Fleece, 320 GSM",
+      "from": "LKR 3,500",
+      "tag": "Merch",
+      "color": "#5b5b60",
+      "image": ""
+    }
+  ],
+  "materials": [
+    {
+      "name": "Cotton Piqué",
+      "gsm": "200 – 240 GSM",
+      "feel": "Textured, breathable, structured",
+      "best": "Corporate polos, uniforms",
+      "care": "Pre-shrunk, colour-fast",
+      "scores": {
+        "breathability": 85,
+        "durability": 90,
+        "softness": 75
+      }
+    },
+    {
+      "name": "Mercerised Cotton",
+      "gsm": "220 – 260 GSM",
+      "feel": "Silky sheen, smooth hand",
+      "best": "Executive & management wear",
+      "care": "Low pilling, holds colour",
+      "scores": {
+        "breathability": 80,
+        "durability": 88,
+        "softness": 92
+      }
+    },
+    {
+      "name": "Dri-Fit Polyester",
+      "gsm": "140 – 180 GSM",
+      "feel": "Light, quick-dry, stretchy",
+      "best": "Sports, outdoor events",
+      "care": "Wrinkle-free, fast drying",
+      "scores": {
+        "breathability": 95,
+        "durability": 85,
+        "softness": 70
+      }
+    },
+    {
+      "name": "CVC Blend (60/40)",
+      "gsm": "180 – 220 GSM",
+      "feel": "Soft, low shrink",
+      "best": "Budget-friendly bulk orders",
+      "care": "Easy care, minimal shrink",
+      "scores": {
+        "breathability": 78,
+        "durability": 86,
+        "softness": 80
+      }
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Embroidery",
+      "text": "Up to 15 thread colours, stitched for a premium raised finish. The classic choice for corporate polos.",
+      "best": "Logos on chest & sleeve",
+      "durability": "Lifetime of the garment",
+      "image": ""
+    },
+    {
+      "name": "DTF Printing",
+      "text": "Direct-to-film transfers for full-colour, photographic artwork with a soft hand feel.",
+      "best": "Detailed, multi-colour artwork",
+      "durability": "50+ washes",
+      "image": "/images/dtf-process.jpg"
+    },
+    {
+      "name": "Sublimation",
+      "text": "Ink fused into polyester fibres for all-over, edge-to-edge designs that never crack or peel.",
+      "best": "Sports kits & all-over prints",
+      "durability": "Permanent",
+      "image": "/images/sublimation-showcase.jpg"
+    },
+    {
+      "name": "Screen Printing",
+      "text": "Bold, opaque spot colours at the best per-piece price for large runs.",
+      "best": "Bulk event tees",
+      "durability": "50+ washes",
+      "image": ""
+    }
+  ],
+  "quality": [
+    {
+      "title": "Pre-shrunk fabric",
+      "text": "Every roll is pre-shrunk so sizes stay true after the first wash."
+    },
+    {
+      "title": "Twin-needle stitching",
+      "text": "Reinforced hems, shoulders and side vents for everyday wear."
+    },
+    {
+      "title": "Pantone colour matching",
+      "text": "Threads and inks matched to your brand guidelines."
+    },
+    {
+      "title": "Piece-by-piece QC",
+      "text": "Each garment is inspected, folded and packed by size."
+    },
+    {
+      "title": "Sample before bulk",
+      "text": "Approve a physical sample before the full run begins."
+    },
+    {
+      "title": "Sizes XS – 4XL",
+      "text": "Men's, women's and kids' fits for the whole team."
+    }
+  ],
+  "process": [
+    {
+      "title": "Share your idea",
+      "text": "Send your logo, quantity and deadline on WhatsApp or the quote form."
+    },
+    {
+      "title": "Mock-up & quote",
+      "text": "We send a digital mock-up and a clear price within 24 hours."
+    },
+    {
+      "title": "Sample approval",
+      "text": "Feel the fabric and check the finish before we go into production."
+    },
+    {
+      "title": "Production & delivery",
+      "text": "Made, checked and delivered island-wide, usually in 7 – 14 days."
+    }
+  ],
+  "works": [
+    {
+      "title": "Executive Uniform Program",
+      "category": "Corporate",
+      "text": "Embroidered piqué polos for a 300-person team.",
+      "image": "/images/corporate-banner.jpg"
+    },
+    {
+      "title": "Urban Streetwear Launch",
+      "category": "DTF",
+      "text": "Full-colour DTF prints for a brand launch drop.",
+      "image": "/images/works-showcase.jpg"
+    },
+    {
+      "title": "The Infinite Print Series",
+      "category": "Sublimation",
+      "text": "All-over sublimated polyester tees.",
+      "image": "/images/sublimation-showcase.jpg"
+    },
+    {
+      "title": "Event Crew Kits",
+      "category": "Events",
+      "text": "Crew and volunteer tees delivered in five days.",
+      "image": "/images/hero-banner.jpg"
+    },
+    {
+      "title": "Retail Collection",
+      "category": "Retail",
+      "text": "Private-label tees for a retail partner.",
+      "image": "/images/store-product.jpg"
+    },
+    {
+      "title": "DTF Production Run",
+      "category": "DTF",
+      "text": "High-detail transfers ready for pressing.",
+      "image": "/images/dtf-process.jpg"
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "The embroidery on our polos is spotless and the fabric still feels new after months of daily wear.",
+      "name": "Sarah Chen",
+      "role": "Marketing Director, TechCorp"
+    },
+    {
+      "quote": "Five hundred event tees, perfect colours, delivered a day early. They made our retreat effortless.",
+      "name": "James Wilson",
+      "role": "HR Manager, InnovateLK"
+    },
+    {
+      "quote": "They matched our brand colours exactly and sent a sample before production. Truly premium service.",
+      "name": "Priya Fernando",
+      "role": "Brand Strategist, CreativeHub"
+    }
+  ],
+  "faq": [
+    {
+      "q": "What is the minimum order quantity?",
+      "a": "Orders start from 10 pieces. Larger quantities unlock better per-piece pricing."
+    },
+    {
+      "q": "How long does production take?",
+      "a": "Most orders are ready in 7 – 14 working days after sample approval. Rush orders are possible on request."
+    },
+    {
+      "q": "Can you match our brand colours?",
+      "a": "Yes. We match fabric, thread and ink colours to your Pantone or HEX references."
+    },
+    {
+      "q": "Do you deliver outside Colombo?",
+      "a": "We deliver island-wide across Sri Lanka, and can arrange international shipping."
+    },
+    {
+      "q": "Can I see a sample first?",
+      "a": "Absolutely. We produce a physical sample for approval before every bulk run."
+    }
+  ],
+  "colorways": [
+    {
+      "name": "Midnight Navy",
+      "hex": "#1d2a44"
+    },
+    {
+      "name": "Pure White",
+      "hex": "#f4f4f2"
+    },
+    {
+      "name": "Jet Black",
+      "hex": "#1a1a1c"
+    },
+    {
+      "name": "Forest",
+      "hex": "#0f6b4f"
+    },
+    {
+      "name": "Crimson",
+      "hex": "#b3261e"
+    },
+    {
+      "name": "Royal Blue",
+      "hex": "#2a56c6"
+    },
+    {
+      "name": "Heather Grey",
+      "hex": "#9a9ca1"
+    },
+    {
+      "name": "Sunflower",
+      "hex": "#f2b632"
+    }
+  ],
+  "admin": {
+    "passwordHash": "9d74fb421364bb53e9a7212d973402dcbaa00ac98e52787e6c4aba63f2771942",
+    "repo": "Ravindu-Hettiarachchi/mr-apparel",
+    "branch": "main",
+    "contentPath": "src/content/site.json"
+  }
+}

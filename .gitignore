@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+*.local.md
+
+# Blender previews
+blender/prev_*.png
+*.blend1
+.claude/
