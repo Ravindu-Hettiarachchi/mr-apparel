@@ -3,7 +3,8 @@
     "name": "MR Apparel",
     "tagline": "Designed to be different.",
     "logoText": "MR",
-    "description": "Custom polo shirts and t-shirts for corporates, events and teams. Premium fabrics, precise embroidery and prints, delivered on time across Sri Lanka."
+    "description": "Custom polo shirts and t-shirts for corporates, events and teams. Premium fabrics, precise embroidery and prints, delivered on time across Sri Lanka.",
+    "logo": "/images/mr-logo-wide.png"
   },
   "contact": {
     "whatsapp": "94704909218",
@@ -19,27 +20,85 @@
     "linkedin": ""
   },
   "hero": {
-    "eyebrow": "Custom polos for teams that show up",
-    "title": "Wear your brand.\nBeautifully.",
-    "subtitle": "Corporate and event polos, crafted from premium piqué cotton and finished with embroidery or print that lasts.",
-    "chapters": [
+    "eyebrow": "Custom polos & t-shirts · Sri Lanka",
+    "title": "Custom polos & tees, made for",
+    "accent": "your team.",
+    "subtitle": "For corporate teams and events. Your logo embroidered or printed on premium polos and tees, from 10 pieces to 10,000.",
+    "primaryButton": "Start your order",
+    "whatsappButton": "WhatsApp us",
+    "rangeLink": "Explore the range in 20+ colours",
+    "lookbook": [
       {
-        "kicker": "Fabric",
-        "title": "220 GSM piqué cotton.",
-        "text": "A breathable honeycomb knit that holds its shape, wash after wash.",
-        "color": "#1d2a44"
+        "image": "/images/hero-banner.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "Corporate team in branded tees"
       },
       {
-        "kicker": "Construction",
-        "title": "Every detail, engineered.",
-        "text": "Flat-knit collar with contrast tipping, a reinforced 3-button placket and ribbed cuffs, all made to match your brand.",
-        "color": "#f4f4f2"
+        "image": "/images/range/v/tee-sun.webp",
+        "fit": "contain",
+        "bgColor": "#fff0c9",
+        "alt": "Sunflower event tee"
       },
       {
-        "kicker": "Colour",
-        "title": "Your colours. Exactly.",
-        "text": "Pantone-matched fabric, tipping and thread across every size in your order.",
-        "color": "#0f6b4f"
+        "image": "/images/works-showcase.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "Custom printed tees"
+      },
+      {
+        "image": "/images/range/v/signature-navy.webp",
+        "fit": "contain",
+        "bgColor": "#dfe5f1",
+        "alt": "Navy piqué polo"
+      },
+      {
+        "image": "/images/corporate-banner.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "Branded polos on display"
+      },
+      {
+        "image": "/images/range/v/tipped-royal.webp",
+        "fit": "contain",
+        "bgColor": "#dfe7fb",
+        "alt": "Royal tipped polo"
+      },
+      {
+        "image": "/images/store-product.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "Rack of custom tees"
+      },
+      {
+        "image": "/images/range/v/drifit-forest.webp",
+        "fit": "contain",
+        "bgColor": "#dbeee4",
+        "alt": "Forest dri-fit polo"
+      },
+      {
+        "image": "/images/dtf-process.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "DTF transfers"
+      },
+      {
+        "image": "/images/range/v/tipped-red.webp",
+        "fit": "contain",
+        "bgColor": "#fbe2df",
+        "alt": "Red tipped polo"
+      },
+      {
+        "image": "/images/sublimation-showcase.jpg",
+        "fit": "cover",
+        "bgColor": "#dddddd",
+        "alt": "Sublimated sports kits"
+      },
+      {
+        "image": "/images/range/v/long-navy.webp",
+        "fit": "contain",
+        "bgColor": "#e4e6ee",
+        "alt": "Navy long sleeve polo"
       }
     ]
   },
@@ -535,5 +594,96 @@
     "repo": "Ravindu-Hettiarachchi/mr-apparel",
     "branch": "main",
     "contentPath": "src/content/site.json"
+  },
+  "categories": [
+    {
+      "label": "Polos",
+      "sub": "Piqué, dri-fit & tipped",
+      "image": "/images/range/signature-polo.webp",
+      "fit": "contain",
+      "link": "#garments"
+    },
+    {
+      "label": "T-shirts",
+      "sub": "Crew & event tees",
+      "image": "/images/range/crew-tee.webp",
+      "fit": "contain",
+      "link": "#garments"
+    },
+    {
+      "label": "Corporate uniforms",
+      "sub": "Teams of 10 to 1,000+",
+      "image": "/images/hero-banner.jpg",
+      "fit": "cover",
+      "link": "#work"
+    },
+    {
+      "label": "Event merch",
+      "sub": "Launches, runs & festivals",
+      "image": "/images/sublimation-showcase.jpg",
+      "fit": "cover",
+      "link": "#work"
+    }
+  ],
+  "ticker": [
+    "Free mock-up",
+    "Sample before bulk",
+    "Embroidery",
+    "DTF Printing",
+    "Sublimation",
+    "Screen Printing",
+    "Pantone colour match",
+    "From 10 pieces",
+    "Island-wide delivery"
+  ],
+  "sections": {
+    "audiences": {
+      "eyebrow": "Who we make for",
+      "title": "One partner for every team you dress.",
+      "lead": "From a 10-piece startup order to thousands of event tees, we handle the fabric, finish and delivery so you don't have to."
+    },
+    "garments": {
+      "eyebrow": "The range",
+      "title": "Pick your garment. We'll make it yours.",
+      "lead": "Every style comes in your choice of colours, with your logo embroidered or printed."
+    },
+    "materials": {
+      "eyebrow": "Materials",
+      "title": "Feel the difference before you see it.",
+      "lead": "Choose the fabric that suits your team, climate and budget. Every option is pre-shrunk and colour-fast."
+    },
+    "finishes": {
+      "eyebrow": "Finishes",
+      "title": "Every logo deserves the right finish.",
+      "lead": "Not sure which to choose? We'll recommend the best finish for your artwork, fabric and budget."
+    },
+    "quality": {
+      "eyebrow": "Quality, guaranteed",
+      "title": "We sample before we produce, check every stitch, and fold every piece by hand. Because the shirt your team wears is the first thing people notice about your brand."
+    },
+    "process": {
+      "eyebrow": "How it works",
+      "title": "From idea to delivery in four steps."
+    },
+    "works": {
+      "eyebrow": "Our work",
+      "title": "Real work, for real teams."
+    },
+    "testimonials": {
+      "eyebrow": "Kind words",
+      "title": "Trusted by teams across Sri Lanka."
+    },
+    "faq": {
+      "title": "Questions, answered."
+    },
+    "quote": {
+      "eyebrow": "Get a quote",
+      "title": "Tell us what you need.",
+      "lead": "We reply within a few hours with pricing, a mock-up and the fastest delivery date."
+    },
+    "cta": {
+      "title": "Ready when your team is.",
+      "lead": "Share your logo and quantity. We'll send a mock-up and price today."
+    }
   }
 }

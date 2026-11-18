@@ -24,28 +24,45 @@ import {
 const TOKEN_KEY = 'mr-apparel:gh-token';
 const SESSION_KEY = 'mr-apparel:session';
 
-const SECTIONS = [
-  ['brand', 'Brand'],
-  ['contact', 'Contact'],
-  ['socials', 'Social media'],
-  ['hero', 'Hero & 3D chapters'],
-  ['stats', 'Stats'],
-  ['audiences', 'Who we serve'],
-  ['garments', 'Garments'],
-  ['materials', 'Materials'],
-  ['techniques', 'Finishes'],
-  ['quality', 'Quality'],
-  ['colorways', 'Studio colours'],
-  ['works', 'Our work (portfolio)'],
-  ['process', 'Process'],
-  ['testimonials', 'Testimonials'],
-  ['faq', 'FAQ'],
-  ['settings', 'Settings & publish'],
+const GROUPS = [
+  ['Homepage', [
+    ['hero', 'Hero & moving photos'],
+    ['categories', 'Category tiles'],
+    ['ticker', 'Scrolling ticker'],
+    ['sections', 'Headings & intro text'],
+  ]],
+  ['Shop', [
+    ['garments', 'Products, prices & colours'],
+    ['materials', 'Materials'],
+    ['techniques', 'Finishes'],
+  ]],
+  ['Content', [
+    ['works', 'Our work (portfolio)'],
+    ['testimonials', 'Testimonials'],
+    ['audiences', 'Who we serve'],
+    ['quality', 'Quality points'],
+    ['stats', 'Numbers'],
+    ['process', 'Process steps'],
+    ['faq', 'FAQ'],
+  ]],
+  ['Business', [
+    ['brand', 'Brand & logo'],
+    ['contact', 'Contact details'],
+    ['socials', 'Social media'],
+    ['settings', 'Settings & publish'],
+  ]],
 ];
+const SECTIONS = GROUPS.flatMap(([, items]) => items);
+const ENUMS = { fit: [['cover', 'Photo (fills the tile)'], ['contain', 'Product cut-out (fits inside)']] };
+const isImageKey = (k) => k === 'image' || k === 'logo' || /Image$/.test(k);
 
 const TEMPLATES = {
+  categories: { label: '', sub: '', image: '', fit: 'cover', link: '#garments' },
+  ticker: '',
+  garments: { name: '', category: 'Polos', fabric: '', from: 'LKR 0', tag: '', image: '', variants: [{ name: '', hex: '#888888', image: '' }] },
   testimonials: { quote: '', name: '', role: '' },
   works: { title: '', client: '', category: '', quantity: '', year: '', text: '', image: '' },
+  lookbook: { image: '', fit: 'cover', bgColor: '#dddddd', alt: '' },
   faq: { q: '', a: '' },
 };
 
@@ -60,18 +77,23 @@ function blank(v) {
   return '';
 }
 
-function resizeImage(file, max = 1600) {
+function resizeImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const alpha = /png|webp|gif|svg/.test(file.type);
+      const max = alpha ? 1100 : 1600; // cut-outs are shown small, photos need more room
+      const sc = Math.min(1, max / Math.max(img.width, img.height));
       const c = document.createElement('canvas');
-      c.width = Math.round(img.width * s);
-      c.height = Math.round(img.height * s);
+      c.width = Math.round(img.width * sc);
+      c.height = Math.round(img.height * sc);
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      resolve(c.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 0.84));
+      if (!alpha) return resolve(c.toDataURL('image/jpeg', 0.84));
+      // keep transparency: WebP where the browser can encode it, otherwise PNG
+      const w = c.toDataURL('image/webp', 0.86);
+      resolve(w.startsWith('data:image/webp') ? w : c.toDataURL('image/png'));
     };
     img.onerror = reject;
     img.src = url;
@@ -79,7 +101,7 @@ function resizeImage(file, max = 1600) {
 }
 
 /* ---------------- generic editors ---------------- */
-function Field({ name, value, onChange }) {
+function Field({ name, value, onChange, template }) {
   if (typeof value === 'number') {
     return (
       <label className="a-field">
@@ -88,7 +110,7 @@ function Field({ name, value, onChange }) {
       </label>
     );
   }
-  if (Array.isArray(value)) return <ArrayEditor name={name} value={value} onChange={onChange} />;
+  if (Array.isArray(value)) return <ArrayEditor name={name} value={value} onChange={onChange} template={template} />;
   if (value && typeof value === 'object') {
     return (
       <fieldset className="a-group">
@@ -98,10 +120,24 @@ function Field({ name, value, onChange }) {
     );
   }
   const v = value ?? '';
-  if (name === 'image') {
+  if (ENUMS[name]) {
+    return (
+      <label className="a-field">
+        <span>{pretty(name === 'fit' ? 'Image style' : name)}</span>
+        <select value={v} onChange={(e) => onChange(e.target.value)}>
+          {ENUMS[name].map(([val, label]) => (
+            <option key={val} value={val}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
+  if (isImageKey(name)) {
     return (
       <div className="a-field">
-        <span>Image</span>
+        <span>{name === 'logo' ? 'Logo image' : 'Image'}</span>
         <div className="a-image">
           {v ? <img src={v} alt="" /> : <div className="a-image-empty"><MdImage size={28} /></div>}
           <div className="a-image-actions">
@@ -149,13 +185,14 @@ function Field({ name, value, onChange }) {
 }
 
 function ObjectEditor({ value, onChange, skip = [] }) {
+  const NESTED = { lookbook: TEMPLATES.lookbook, variants: TEMPLATES.garments.variants[0] };
   return (
     <div className="a-grid">
       {Object.entries(value)
         .filter(([k]) => !skip.includes(k))
         .map(([k, v]) => (
-          <div key={k} className={Array.isArray(v) || (v && typeof v === 'object') || k === 'image' || LONG.includes(k) ? 'a-span' : ''}>
-            <Field name={k} value={v} onChange={(nv) => onChange({ ...value, [k]: nv })} />
+          <div key={k} className={Array.isArray(v) || (v && typeof v === 'object') || isImageKey(k) || LONG.includes(k) ? 'a-span' : ''}>
+            <Field name={k} value={v} template={NESTED[k]} onChange={(nv) => onChange({ ...value, [k]: nv })} />
           </div>
         ))}
     </div>
@@ -171,7 +208,7 @@ function ArrayEditor({ name, value, onChange, template }) {
     [a[i], a[j]] = [a[j], a[i]];
     onChange(a);
   };
-  const titleOf = (it, i) => (typeof it === 'object' ? it.name || it.title || it.q || it.label || it.kicker || `Item ${i + 1}` : String(it));
+  const titleOf = (it, i) => (typeof it === 'object' ? it.name || it.title || it.q || it.label || it.kicker || it.alt || `Item ${i + 1}` : String(it) || `Item ${i + 1}`);
   return (
     <div className="a-array">
       {name && <div className="a-array-head">{pretty(name)}</div>}
@@ -179,7 +216,8 @@ function ArrayEditor({ name, value, onChange, template }) {
         <details key={i} className="a-item" open={value.length <= 3}>
           <summary>
             <span className="a-item-title">
-              {it?.hex && <i className="a-dot" style={{ background: it.hex }} />}
+              {it?.image && <img className="a-thumb" src={it.image} alt="" />}
+              {it?.hex && !it?.image && <i className="a-dot" style={{ background: it.hex }} />}
               {it?.color && <i className="a-dot" style={{ background: it.color }} />}
               {titleOf(it, i)}
             </span>
@@ -268,7 +306,7 @@ export default function AdminPage() {
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [data, setData] = useState(base);
-  const [tab, setTab] = useState('brand');
+  const [tab, setTab] = useState('hero');
   const [token, setToken] = useState('');
   const [preview, setPreview] = useState(false);
   const [status, setStatus] = useState(null); // {type, msg}
@@ -371,10 +409,15 @@ export default function AdminPage() {
           </div>
         </div>
         <nav>
-          {SECTIONS.map(([k, l]) => (
-            <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>
-              {l}
-            </button>
+          {GROUPS.map(([g, items]) => (
+            <div key={g} className="a-group-nav">
+              <small>{g}</small>
+              {items.map(([k, l]) => (
+                <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>
+                  {l}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
         <button

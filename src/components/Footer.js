@@ -3,7 +3,7 @@
 import { FaWhatsapp } from 'react-icons/fa';
 import { MdArrowForward } from 'react-icons/md';
 import { motion } from 'framer-motion';
-import { useContent, waLink } from '@/lib/content';
+import { useContent, waLink, sec } from '@/lib/content';
 import { Reveal, SplitWords } from '@/components/Motion';
 import { SocialLinks } from '@/components/sections/Quote';
 
@@ -14,10 +14,8 @@ export function CtaBand() {
       <div className="container">
         <Reveal scale={0.94} y={40}>
           <div className="cta-band" data-theme="dark">
-            <SplitWords as="h2" className="h1" text="Ready when your team is." />
-            <p className="lead" style={{ color: 'var(--on-dark-muted)', margin: '20px auto 0' }}>
-              Share your logo and quantity. We&apos;ll send a mock-up and price today.
-            </p>
+            <SplitWords as="h2" className="h1" text={sec(c, 'cta').title} />
+            <p className="lead" style={{ color: 'var(--on-dark-muted)', margin: '20px auto 0' }}>{sec(c, 'cta').lead}</p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginTop: 36 }}>
               <a className="btn btn-lg btn-light" href="#quote">
                 Request a quote <MdArrowForward />

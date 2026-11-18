@@ -52,7 +52,7 @@ export default function Nav() {
           }}
         >
           <a href="#top" className="brand" aria-label={`${c.brand.name} home`}>
-            <img src="/images/mr-logo-wide.png" alt="" className="brand-logo" width="48" height="25" />
+            <img src={c.brand.logo || '/images/mr-logo-wide.png'} alt="" className="brand-logo" width="48" height="25" />
             <span className="brand-name">{c.brand.name.replace(/^MR\s*/i, '') || c.brand.name}</span>
           </a>
           <ul className="nav-links">

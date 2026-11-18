@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { MdArrowForward } from 'react-icons/md';
-import { useContent } from '@/lib/content';
+import { useContent, sec } from '@/lib/content';
 import { Reveal, SplitWords } from '@/components/Motion';
 
 const EASE = [0.16, 1, 0.3, 1];
@@ -164,14 +164,12 @@ export default function Finishes() {
         <div className="section-head split">
           <div>
             <Reveal>
-              <p className="eyebrow">Finishes</p>
+              <p className="eyebrow">{sec(c, 'finishes').eyebrow}</p>
             </Reveal>
-            <SplitWords as="h2" className="h1" text="Every logo deserves the right finish." />
+            <SplitWords as="h2" className="h1" text={sec(c, 'finishes').title} />
           </div>
           <Reveal>
-            <p className="lead" style={{ maxWidth: 420, marginTop: 0 }}>
-              Not sure which to choose? We&apos;ll recommend the best finish for your artwork, fabric and budget.
-            </p>
+            <p className="lead" style={{ maxWidth: 420, marginTop: 0 }}>{sec(c, 'finishes').lead}</p>
           </Reveal>
         </div>
         <div className="fgrid">

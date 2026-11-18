@@ -39,3 +39,8 @@ export function waLink(number, text = '') {
   const n = String(number || '').replace(/\D/g, '');
   return `https://wa.me/${n}${text ? `?text=${encodeURIComponent(text)}` : ''}`;
 }
+
+/** Section copy from content with safe fallbacks: sec(c, 'works') -> { eyebrow, title, lead } */
+export function sec(c, key) {
+  return { eyebrow: '', title: '', lead: '', ...(c.sections?.[key] || {}) };
+}

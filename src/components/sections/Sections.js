@@ -15,7 +15,7 @@ import {
   MdVolunteerActivism,
   MdStar,
 } from 'react-icons/md';
-import { useContent, waLink } from '@/lib/content';
+import { useContent, waLink, sec } from '@/lib/content';
 import { Reveal, Stagger, Item, SplitWords, ScrubText, CountUp } from '@/components/Motion';
 import FadeImg from '@/components/FadeImg';
 
@@ -32,7 +32,7 @@ const EASE = [0.16, 1, 0.3, 1];
 /* ---------------- Marquee ---------------- */
 export function Marquee() {
   const c = useContent();
-  const words = ['Free mock-up', 'Sample before bulk', ...c.techniques.map((t) => t.name), 'Pantone colour match', 'From 10 pieces', 'Island-wide delivery'];
+  const words = c.ticker?.length ? c.ticker : ['Custom polos', 'Custom tees'];
   return (
     <div className="marquee" data-theme="light" aria-hidden>
       <div className="marquee-track">
@@ -56,11 +56,11 @@ export function Audiences() {
       <div className="container">
         <div className="section-head">
           <Reveal>
-            <p className="eyebrow">Who we make for</p>
+            <p className="eyebrow">{sec(c, 'audiences').eyebrow}</p>
           </Reveal>
-          <SplitWords as="h2" className="h1" text="One partner for every team you dress." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'audiences').title} />
           <Reveal delay={0.1}>
-            <p className="lead">From a 10-piece startup order to thousands of event tees, we handle the fabric, finish and delivery so you don&apos;t have to.</p>
+            <p className="lead">{sec(c, 'audiences').lead}</p>
           </Reveal>
         </div>
         <Stagger className="grid-3">
@@ -149,14 +149,12 @@ export function Garments() {
         <div className="section-head split" style={{ marginBottom: 28 }}>
           <div>
             <Reveal>
-              <p className="eyebrow">The range</p>
+              <p className="eyebrow">{sec(c, 'garments').eyebrow}</p>
             </Reveal>
-            <SplitWords as="h2" className="h1" text="Pick your garment. We'll make it yours." />
+            <SplitWords as="h2" className="h1" text={sec(c, 'garments').title} />
           </div>
           <Reveal>
-            <p className="lead" style={{ maxWidth: 380, marginTop: 0 }}>
-              Every style comes in your choice of colours, with your logo embroidered or printed.
-            </p>
+            <p className="lead" style={{ maxWidth: 380, marginTop: 0 }}>{sec(c, 'garments').lead}</p>
           </Reveal>
         </div>
         <div className="shop-tabs" role="tablist">
@@ -203,11 +201,11 @@ export function Materials() {
       <div className="container">
         <div className="section-head center">
           <Reveal>
-            <p className="eyebrow">Materials</p>
+            <p className="eyebrow">{sec(c, 'materials').eyebrow}</p>
           </Reveal>
-          <SplitWords as="h2" className="h1" text="Feel the difference before you see it." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'materials').title} />
           <Reveal delay={0.1}>
-            <p className="lead">Choose the fabric that suits your team, climate and budget. Every option is pre-shrunk and colour-fast.</p>
+            <p className="lead">{sec(c, 'materials').lead}</p>
           </Reveal>
         </div>
         <Reveal className="center">
@@ -288,11 +286,11 @@ export function Quality() {
     <section className="section dark" id="quality" data-theme="dark">
       <div className="container">
         <Reveal>
-          <p className="eyebrow">Quality, guaranteed</p>
+          <p className="eyebrow">{sec(c, 'quality').eyebrow}</p>
         </Reveal>
         <ScrubText
           className="scrub-text"
-          text="We sample before we produce, check every stitch, and fold every piece by hand. Because the shirt your team wears is the first thing people notice about your brand."
+          text={sec(c, 'quality').title}
         />
         <div className="stats">
           {c.stats.map((s, i) => (
@@ -329,9 +327,9 @@ export function Process() {
       <div className="container">
         <div className="section-head">
           <Reveal>
-            <p className="eyebrow">How it works</p>
+            <p className="eyebrow">{sec(c, 'process').eyebrow}</p>
           </Reveal>
-          <SplitWords as="h2" className="h1" text="From idea to delivery in four steps." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'process').title} />
         </div>
         <div className="process" ref={ref}>
           <div className="process-line">
@@ -363,9 +361,9 @@ export function Works() {
         <div className="section-head split">
           <div>
             <Reveal>
-              <p className="eyebrow">Recent work</p>
+              <p className="eyebrow">{sec(c, 'works').eyebrow}</p>
             </Reveal>
-            <SplitWords as="h2" className="h1" text="Real work, for real teams." />
+            <SplitWords as="h2" className="h1" text={sec(c, 'works').title} />
           </div>
           <Reveal className="chips">
             {cats.map((k) => (
@@ -430,9 +428,9 @@ export function Testimonials() {
       <div className="container">
         <div className="section-head center">
           <Reveal>
-            <p className="eyebrow">Kind words</p>
+            <p className="eyebrow">{sec(c, 'testimonials').eyebrow}</p>
           </Reveal>
-          <SplitWords as="h2" className="h1" text="Trusted by teams across Sri Lanka." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'testimonials').title} />
         </div>
         <Stagger className="grid-3">
           {c.testimonials.map((t, i) => (
@@ -470,7 +468,7 @@ export function Faq() {
     <section className="section" data-theme="light" id="faq" style={{ paddingTop: 0 }}>
       <div className="container">
         <div className="section-head center">
-          <SplitWords as="h2" className="h1" text="Questions, answered." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'faq').title} />
         </div>
         <div className="faq">
           {c.faq.map((f, i) => (

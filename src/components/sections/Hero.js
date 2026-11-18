@@ -14,14 +14,19 @@ import { FaWhatsapp } from 'react-icons/fa';
   endlessly at different speeds, with extra parallax as you scroll.
 */
 const EASE = [0.16, 1, 0.3, 1];
-const V = '/images/range/v/';
-const P = (img, alt) => ({ img, alt, kind: 'is-photo' });
-const R = (img, bg, alt) => ({ img: V + img, bg, alt, kind: 'is-product' });
-const COLUMNS = [
-  [P('/images/hero-banner.jpg', 'Corporate team in branded tees'), R('signature-navy.webp', '#dfe5f1', 'Navy piqué polo'), P('/images/store-product.jpg', 'Rack of custom tees'), R('tipped-red.webp', '#fbe2df', 'Red tipped polo')],
-  [R('tee-sun.webp', '#fff0c9', 'Sunflower event tee'), P('/images/corporate-banner.jpg', 'Branded polos on display'), R('drifit-forest.webp', '#dbeee4', 'Forest dri-fit polo'), P('/images/sublimation-showcase.jpg', 'Sublimated sports kits')],
-  [P('/images/works-showcase.jpg', 'Custom printed tees'), R('tipped-royal.webp', '#dfe7fb', 'Royal tipped polo'), P('/images/dtf-process.jpg', 'DTF transfers'), R('long-navy.webp', '#e4e6ee', 'Navy long sleeve polo')],
-];
+// Splits the editable tile list into three columns (round-robin), repeating
+// tiles if there are too few so the endless loop always looks full.
+function toColumns(tiles) {
+  const list = tiles?.length ? tiles : [];
+  const cols = [[], [], []];
+  list.forEach((t, i) => cols[i % 3].push(t));
+  return cols.map((col, k) => {
+    if (!col.length && list.length) col = [list[k % list.length]];
+    let out = col;
+    while (out.length && out.length < 4) out = out.concat(col);
+    return out;
+  });
+}
 
 const up = (delay, y = 28) => ({
   hidden: { opacity: 0, y },
@@ -34,8 +39,8 @@ const line = (delay) => ({
 
 function Tile({ t }) {
   return (
-    <figure className={`lb-tile ${t.kind}`} style={t.bg ? { background: t.bg } : undefined}>
-      <img src={t.img} alt={t.alt} draggable={false} loading="eager" />
+    <figure className={`lb-tile ${t.fit === 'contain' ? 'is-product' : 'is-photo'}`} style={t.bgColor ? { background: t.bgColor } : undefined}>
+      <img src={t.image} alt={t.alt || ''} draggable={false} loading="eager" />
     </figure>
   );
 }
@@ -65,6 +70,8 @@ export default function Hero() {
   const ready = useIntroReady();
   const reduce = useReducedMotion();
   const ref = useRef(null);
+  const h = c.hero;
+  const cols = toColumns(h.lookbook);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const y1 = useRange(scrollYProgress, [0, 1], [0, -160]);
   const y2 = useRange(scrollYProgress, [0, 1], [0, 120]);
@@ -82,9 +89,9 @@ export default function Hero() {
     >
       <div className="mh-lookbook" aria-hidden>
         <div className="mh-tilt">
-          <Column items={COLUMNS[0]} dir="up" dur={46} y={y1} delay={0.1} />
-          <Column items={COLUMNS[1]} dir="down" dur={54} y={y2} delay={0.22} />
-          <Column items={COLUMNS[2]} dir="up" dur={50} y={y3} delay={0.34} />
+          <Column items={cols[0]} dir="up" dur={46} y={y1} delay={0.1} />
+          <Column items={cols[1]} dir="down" dur={54} y={y2} delay={0.22} />
+          <Column items={cols[2]} dir="up" dur={50} y={y3} delay={0.34} />
         </div>
       </div>
       <div className="mh-fade" aria-hidden />
@@ -92,27 +99,32 @@ export default function Hero() {
       <div className="container mh-inner">
         <motion.div className="mh-copy" style={{ y: copyY }}>
           <motion.p className="fh-kicker ink" variants={up(0.05, 14)}>
-            Custom polos &amp; t-shirts · Sri Lanka
+            {h.eyebrow}
           </motion.p>
-          <h1 className="mh-title">
-            {['Custom polos', '& tees, made', 'for '].map((t, k) => (
-              <span key={k} className="fh-line">
-                <motion.span variants={line(0.1 + k * 0.1)}>
-                  {t}
-                  {k === 2 && <span className="mh-accent">your team.</span>}
+          <h1 className="mh-title" aria-label={`${h.title} ${h.accent}`}>
+            {String(h.title).split(' ').map((w, k) => (
+              <span key={`t${k}`} className="fh-line mh-word">
+                <motion.span variants={line(0.1 + k * 0.07)}>{w}&nbsp;</motion.span>
+              </span>
+            ))}
+            {String(h.accent).split(' ').map((w, k, arr) => (
+              <span key={`a${k}`} className="fh-line mh-word">
+                <motion.span className="mh-accent" variants={line(0.1 + (String(h.title).split(' ').length + k) * 0.07)}>
+                  {w}
+                  {k < arr.length - 1 ? '\u00A0' : ''}
                 </motion.span>
               </span>
             ))}
           </h1>
           <motion.p className="mh-sub" variants={up(0.45)}>
-            For corporate teams and events. Your logo embroidered or printed on premium polos and tees, from 10 pieces to 10,000.
+            {h.subtitle}
           </motion.p>
           <motion.div className="mh-actions" variants={up(0.56)}>
             <a href="#quote" className="btn btn-lg btn-dark">
-              Start your order <MdArrowForward />
+              {h.primaryButton} <MdArrowForward />
             </a>
             <a href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}! I'd like a quote.`)} target="_blank" rel="noreferrer" className="btn btn-lg btn-outline">
-              <FaWhatsapp color="#25d366" /> WhatsApp us
+              <FaWhatsapp color="#25d366" /> {h.whatsappButton}
             </a>
           </motion.div>
           <motion.a href="#garments" className="mh-range" variants={up(0.7, 12)}>
@@ -121,7 +133,7 @@ export default function Hero() {
                 <i key={h} style={{ background: h }} />
               ))}
             </span>
-            Explore the range in 20+ colours <MdNorthEast />
+            {h.rangeLink} <MdNorthEast />
           </motion.a>
         </motion.div>
       </div>
@@ -129,14 +141,10 @@ export default function Hero() {
   );
 }
 
-const CATS = [
-  { label: 'Polos', sub: 'Piqué, dri-fit & tipped', img: '/images/range/signature-polo.webp', href: '#garments', product: true },
-  { label: 'T-shirts', sub: 'Crew & event tees', img: '/images/range/crew-tee.webp', href: '#garments', product: true },
-  { label: 'Corporate uniforms', sub: 'Teams of 10 to 1,000+', img: '/images/hero-banner.jpg', href: '#work' },
-  { label: 'Event merch', sub: 'Launches, runs & festivals', img: '/images/sublimation-showcase.jpg', href: '#work' },
-];
-
 export function Categories() {
+  const c = useContent();
+  const CATS = c.categories || [];
+  if (!CATS.length) return null;
   return (
     <section className="section" data-theme="light" style={{ paddingTop: 'clamp(48px, 7vw, 88px)', paddingBottom: 'clamp(48px, 7vw, 88px)' }}>
       <div className="container">
@@ -147,21 +155,21 @@ export function Categories() {
           viewport={{ once: false, amount: 0.2 }}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
         >
-          {CATS.map((c) => (
+          {CATS.map((cat) => (
             <motion.a
-              key={c.label}
-              href={c.href}
-              className={`cat ${c.product ? 'product' : 'photo'}`}
+              key={cat.label + cat.image}
+              href={cat.link || '#garments'}
+              className={`cat ${cat.fit === 'contain' ? 'product' : 'photo'}`}
               variants={{
                 hidden: { opacity: 0, y: 50, clipPath: 'inset(18% 0 0 0 round 16px)' },
                 show: { opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0 round 16px)', transition: { duration: 1, ease: EASE } },
               }}
             >
-              <img src={c.img} alt={c.label} loading="lazy" />
+              <img src={cat.image} alt={cat.label} loading="lazy" />
               <span className="cat-label">
                 <span>
-                  <strong>{c.label}</strong>
-                  <small>{c.sub}</small>
+                  <strong>{cat.label}</strong>
+                  <small>{cat.sub}</small>
                 </span>
                 <span className="cat-arrow">
                   <MdNorthEast />

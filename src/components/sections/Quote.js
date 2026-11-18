@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaWhatsapp, FaInstagram, FaFacebookF, FaTiktok, FaLinkedinIn } from 'react-icons/fa';
 import { MdEmail, MdPhone, MdPlace, MdSchedule, MdSend } from 'react-icons/md';
-import { useContent, waLink } from '@/lib/content';
+import { useContent, waLink, sec } from '@/lib/content';
 import { Reveal, SplitWords, useRipple } from '@/components/Motion';
 
 export function SocialLinks({ socials }) {
@@ -69,11 +69,11 @@ export default function Quote() {
       <div className="container">
         <div className="section-head">
           <Reveal>
-            <p className="eyebrow">Get a quote</p>
+            <p className="eyebrow">{sec(c, 'quote').eyebrow}</p>
           </Reveal>
-          <SplitWords as="h2" className="h1" text="Tell us what you need." />
+          <SplitWords as="h2" className="h1" text={sec(c, 'quote').title} />
           <Reveal delay={0.1}>
-            <p className="lead">We reply within a few hours with pricing, a mock-up and the fastest delivery date.</p>
+            <p className="lead">{sec(c, 'quote').lead}</p>
           </Reveal>
         </div>
         <div className="quote-wrap">
