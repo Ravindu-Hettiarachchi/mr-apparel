@@ -20,6 +20,7 @@ import {
 import { useContent } from '@/lib/content';
 import { Reveal, Stagger, Item, SplitWords, ScrubText, CountUp } from '@/components/Motion';
 import Silhouette, { kindFor } from '@/components/Silhouette';
+import FadeImg from '@/components/FadeImg';
 
 const ICONS = {
   briefcase: MdBusinessCenter,
@@ -121,7 +122,7 @@ export function Garments() {
               transition={{ duration: 0.9, delay: i * 0.06, ease: EASE }}
             >
               <div className="g-visual" style={{ background: `radial-gradient(80% 70% at 50% 40%, #fff, ${g.color}22)` }}>
-                {g.image ? <img src={g.image} alt={g.name} loading="lazy" /> : <Silhouette kind={kindFor(g.name)} color={g.color} />}
+                {g.image ? <FadeImg src={g.image} alt={g.name} loading="lazy" wrapClass="fill" /> : <Silhouette kind={kindFor(g.name)} color={g.color} />}
                 {g.tag && <span className="g-tag">{g.tag}</span>}
               </div>
               <div className="g-body">
@@ -229,78 +230,6 @@ export function Materials() {
             </div>
           </div>
         </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- Techniques (sticky) ---------------- */
-function TechVisual({ t, i }) {
-  if (t.image) return <img src={t.image} alt={t.name} />;
-  return (
-    <div
-      className="tech-fallback"
-      style={{
-        background:
-          i % 2
-            ? 'radial-gradient(70% 60% at 50% 50%, #3d1f7a, #0b0b10)'
-            : 'radial-gradient(70% 60% at 50% 50%, #12306e, #0b0b10)',
-      }}
-    >
-      <span className={`stitch ${i === 0 ? 'dashed' : ''}`}>{i === 0 ? 'MR' : t.name.split(' ')[0]}</span>
-    </div>
-  );
-}
-
-export function Techniques() {
-  const c = useContent();
-  const [active, setActive] = useState(0);
-  return (
-    <section className="section" id="finishes" data-theme="light" style={{ background: 'var(--surface-1)' }}>
-      <div className="container">
-        <div className="section-head">
-          <Reveal>
-            <p className="eyebrow">Finishes</p>
-          </Reveal>
-          <SplitWords as="h2" className="h1" text="Every logo deserves the right finish." />
-        </div>
-        <div className="tech">
-          <div className="tech-list">
-            {c.techniques.map((t, i) => (
-              <motion.div
-                key={i}
-                className="tech-item"
-                style={{ opacity: active === i ? 1 : 0.28 }}
-                onViewportEnter={() => setActive(i)}
-                viewport={{ amount: 0.6 }}
-              >
-                <span className="num">0{i + 1}</span>
-                <h3 className="h1">{t.name}</h3>
-                <p>{t.text}</p>
-                <div className="tech-meta">
-                  <span>Best for: {t.best}</span>
-                  <span>Lasts: {t.durability}</span>
-                </div>
-                {t.image ? <img className="mobile-img" src={t.image} alt={t.name} loading="lazy" /> : null}
-              </motion.div>
-            ))}
-          </div>
-          <div className="tech-visual">
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={active}
-                className="layer"
-                initial={{ opacity: 0, scale: 1.12, filter: 'blur(12px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.9, ease: EASE }}
-              >
-                {c.techniques[active] && <TechVisual t={c.techniques[active]} i={active} />}
-              </motion.div>
-            </AnimatePresence>
-            <span className="tech-caption">{c.techniques[active]?.name}</span>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -415,7 +344,7 @@ export function Works() {
                 viewport={{ once: false, amount: 0.15 }}
                 transition={{ duration: 0.8, ease: EASE }}
               >
-                {w.image && <img src={w.image} alt={w.title} loading="lazy" />}
+                {w.image && <FadeImg src={w.image} alt={w.title} loading="lazy" />}
                 <div className="work-meta">
                   <small>{[w.category, w.year].filter(Boolean).join(' · ')}</small>
                   <h3 className="h3">{w.title}</h3>

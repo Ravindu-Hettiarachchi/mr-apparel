@@ -11,7 +11,6 @@ const LINKS = [
   ['Materials', '#materials'],
   ['Finishes', '#finishes'],
   ['Quality', '#quality'],
-  ['Studio', '#studio'],
   ['Contact', '#quote'],
 ];
 

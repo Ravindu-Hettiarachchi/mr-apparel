@@ -1,15 +1,17 @@
 import { ContentProvider } from '@/lib/content';
 import SmoothScroll from '@/components/SmoothScroll';
 import Nav from '@/components/Nav';
+import { IntroProvider } from '@/components/Intro';
 import Hero from '@/components/sections/Hero';
-import { Marquee, Audiences, Garments, Materials, Techniques, Quality, Process, Works, Testimonials, Faq } from '@/components/sections/Sections';
-import Studio from '@/components/sections/Studio';
+import { Marquee, Audiences, Garments, Materials, Quality, Process, Works, Testimonials, Faq } from '@/components/sections/Sections';
+import Finishes from '@/components/sections/Finishes';
 import Quote from '@/components/sections/Quote';
 import Footer, { CtaBand, Fab } from '@/components/Footer';
 
 export default function Home() {
   return (
     <ContentProvider>
+      <IntroProvider>
       <SmoothScroll>
         <Nav />
         <main>
@@ -19,9 +21,8 @@ export default function Home() {
           <Audiences />
           <Garments />
           <Materials />
-          <Techniques />
+          <Finishes />
           <Quality />
-          <Studio />
           <Process />
           <Testimonials />
           <Faq />
@@ -31,6 +32,7 @@ export default function Home() {
         <Footer />
         <Fab />
       </SmoothScroll>
+      </IntroProvider>
     </ContentProvider>
   );
 }

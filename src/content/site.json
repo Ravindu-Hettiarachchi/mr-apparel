@@ -203,28 +203,52 @@
       "text": "Up to 15 thread colours, stitched for a premium raised finish. The classic choice for corporate polos.",
       "best": "Logos on chest & sleeve",
       "durability": "Lifetime of the garment",
-      "image": ""
+      "image": "",
+      "scores": {
+        "detail": 78,
+        "durability": 98,
+        "bulkValue": 62,
+        "softFeel": 70
+      }
     },
     {
       "name": "DTF Printing",
       "text": "Direct-to-film transfers for full-colour, photographic artwork with a soft hand feel.",
       "best": "Detailed, multi-colour artwork",
       "durability": "50+ washes",
-      "image": "/images/dtf-process.jpg"
+      "image": "/images/dtf-process.jpg",
+      "scores": {
+        "detail": 96,
+        "durability": 84,
+        "bulkValue": 72,
+        "softFeel": 82
+      }
     },
     {
       "name": "Sublimation",
       "text": "Ink fused into polyester fibres for all-over, edge-to-edge designs that never crack or peel.",
       "best": "Sports kits & all-over prints",
       "durability": "Permanent",
-      "image": "/images/sublimation-showcase.jpg"
+      "image": "/images/sublimation-showcase.jpg",
+      "scores": {
+        "detail": 92,
+        "durability": 100,
+        "bulkValue": 80,
+        "softFeel": 100
+      }
     },
     {
       "name": "Screen Printing",
       "text": "Bold, opaque spot colours at the best per-piece price for large runs.",
       "best": "Bulk event tees",
       "durability": "50+ washes",
-      "image": ""
+      "image": "",
+      "scores": {
+        "detail": 70,
+        "durability": 88,
+        "bulkValue": 98,
+        "softFeel": 76
+      }
     }
   ],
   "quality": [

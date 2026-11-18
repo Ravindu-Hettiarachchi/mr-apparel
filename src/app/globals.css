@@ -2141,3 +2141,358 @@ button {
     gap: 18px;
   }
 }
+
+/* =========================================================
+   INTRO — logo strokes assemble, then glide into the nav
+========================================================= */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  pointer-events: all;
+}
+.intro.is-flying {
+  pointer-events: none;
+}
+.intro-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 60% at 50% 45%, #ffffff 0%, #fff8f1 70%, #fdf1e6 100%);
+}
+.intro-mark {
+  position: relative;
+  width: min(300px, 58vw);
+  aspect-ratio: 384 / 204;
+  overflow: visible;
+  will-change: transform;
+}
+.intro-mark img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.intro-sheen {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: 0;
+  width: 26%;
+  transform: skewX(-24deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.intro-active .nav .brand-logo {
+  opacity: 0;
+}
+.nav .brand-logo {
+  transition: opacity 0.2s, height 0.6s var(--ease), transform 0.6s var(--ease);
+}
+
+/* =========================================================
+   IMAGE LOADING — shimmer, then fade + un-blur
+========================================================= */
+.fimg-wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: linear-gradient(100deg, #eceae7 30%, #f6f4f1 50%, #eceae7 70%);
+  background-size: 300% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.fimg-wrap.is-loaded {
+  background: transparent;
+  animation: none;
+}
+.fimg-wrap.fill,
+.ch-tile .fimg-wrap,
+.g-visual .fimg-wrap {
+  width: 100%;
+  height: 100%;
+}
+.fimg-wrap .fimg {
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(1.04);
+  transition: opacity 0.8s var(--ease-out), filter 0.9s var(--ease-out), transform 1.2s var(--ease-out);
+}
+.fimg-wrap.is-loaded .fimg {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+.g-visual .fimg-wrap,
+.ch-tile.t-polo .fimg-wrap {
+  background-color: transparent;
+}
+@keyframes shimmer {
+  to { background-position: -150% 0; }
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* =========================================================
+   FINISHES — expanding panels
+========================================================= */
+.fin {
+  display: flex;
+  gap: 12px;
+  height: clamp(520px, 72vh, 640px);
+}
+.fin-panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-1);
+  cursor: pointer;
+  outline: none;
+}
+.fin-panel.on {
+  flex: 7.5 1 0;
+  cursor: default;
+  box-shadow: var(--shadow-2);
+}
+.fin-panel:not(.on):hover {
+  background: var(--primary-container);
+}
+.fin-panel:focus-visible {
+  box-shadow: 0 0 0 3px rgba(232, 89, 12, 0.4);
+}
+.fin-tab {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 0;
+  transition: opacity 0.3s;
+}
+.fin-panel.on .fin-tab {
+  opacity: 0;
+  pointer-events: none;
+}
+.fin-num {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.fin-tab-name {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-family: var(--font-display);
+  font-weight: 650;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.fin-body {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+.fin-visual {
+  position: relative;
+  overflow: hidden;
+  background: #121214;
+}
+.fin-badge {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+.fin-info {
+  padding: clamp(24px, 3vw, 44px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+.fin-info p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17px;
+}
+.fin-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fin-meta span {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.fin-meta span + span {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+.fin-scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  margin: 6px 0 4px;
+}
+.fin-score-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.fin-score-row span:last-child {
+  color: var(--muted);
+}
+.fin-track {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.fin-fill {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #ffc20e, #f26a21);
+  transform-origin: left;
+}
+.fin-info .link {
+  margin-top: auto;
+}
+.fin-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ffc20e, #f26a21);
+  transform-origin: left;
+  z-index: 3;
+}
+/* visuals */
+.fv {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.fv-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fv-emb {
+  background-color: #1d2a44;
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.09) 0 1.6px, transparent 2.2px),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.3) 0 1px, transparent 2.2px);
+  background-size: 9px 9px, 9px 9px;
+  background-position: 0 0, 4.5px 4.5px;
+}
+.fv-emb svg {
+  width: 72%;
+  max-width: 420px;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+}
+.fv-needle {
+  position: absolute;
+  left: 26%;
+  top: 26%;
+  width: 3px;
+  height: 46px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #e7e7ea, #8b8b92);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+.fv-screen {
+  background: radial-gradient(80% 80% at 50% 40%, #2a2a2e, #121214);
+}
+.fv-frame {
+  position: relative;
+  width: 72%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px;
+  background: #f4f1ec;
+  box-shadow: 0 0 0 10px #3a3a40, 0 30px 60px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.fv-ink {
+  position: absolute;
+  border-radius: 6px;
+}
+.fv-ink.l0 { inset: 18% 46% 18% 10%; transform: skewX(-18deg); }
+.fv-ink.l1 { inset: 18% 28% 18% 30%; transform: skewX(-18deg); }
+.fv-ink.l2 { inset: 18% 8% 18% 52%; transform: skewX(-18deg); border-radius: 6px 40% 40% 6px; }
+.fv-halftone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.22) 1px, transparent 1.6px);
+  background-size: 6px 6px;
+  mix-blend-mode: overlay;
+}
+.fv-squeegee {
+  position: absolute;
+  top: -6%;
+  bottom: -6%;
+  width: 8%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #2b2b30, #55555d);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
+}
+@media (max-width: 900px) {
+  .fin {
+    flex-direction: column;
+    height: auto;
+  }
+  .fin-panel {
+    flex: none;
+    height: 64px;
+  }
+  .fin-panel.on {
+    height: auto;
+  }
+  .fin-tab {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 0 22px;
+  }
+  .fin-tab-name {
+    writing-mode: horizontal-tb;
+    rotate: 0deg;
+    font-size: 19px;
+  }
+  .fin-body {
+    position: relative;
+    grid-template-columns: 1fr;
+  }
+  .fin-visual {
+    height: 260px;
+  }
+  .fin-scores {
+    grid-template-columns: 1fr;
+  }
+}
