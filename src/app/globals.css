@@ -2246,7 +2246,7 @@ button {
 .fin {
   display: flex;
   gap: 12px;
-  height: clamp(520px, 72vh, 640px);
+  height: clamp(480px, calc(100vh - 190px), 640px);
 }
 .fin-panel {
   position: relative;
@@ -2393,6 +2393,38 @@ button {
   transform-origin: left;
   z-index: 3;
 }
+/* scroll-driven pinning */
+.fin-scroll {
+  position: relative;
+}
+.fin-sticky {
+  position: sticky;
+  top: 86px;
+}
+.fin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.fin-dots button {
+  border: 0;
+  background: none;
+  padding: 6px 2px;
+  cursor: pointer;
+}
+.fin-dots span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  transition: width 0.4s var(--ease), background 0.3s;
+}
+.fin-dots .on span {
+  width: 28px;
+  background: linear-gradient(90deg, #ffc20e, #f26a21);
+}
 /* visuals */
 .fv {
   position: absolute;
@@ -2463,6 +2495,12 @@ button {
   box-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
 }
 @media (max-width: 900px) {
+  .fin-scroll {
+    height: auto !important;
+  }
+  .fin-sticky {
+    position: static;
+  }
   .fin {
     flex-direction: column;
     height: auto;
@@ -2472,6 +2510,7 @@ button {
     height: 64px;
   }
   .fin-panel.on {
+    flex: none;
     height: auto;
   }
   .fin-tab {
