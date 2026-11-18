@@ -15,13 +15,13 @@ export default function Home() {
         <main>
           <Hero />
           <Marquee />
+          <Works />
           <Audiences />
           <Garments />
           <Materials />
           <Techniques />
           <Quality />
           <Studio />
-          <Works />
           <Process />
           <Testimonials />
           <Faq />

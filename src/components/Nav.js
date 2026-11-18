@@ -6,19 +6,19 @@ import { MdMenu, MdClose } from 'react-icons/md';
 import { useContent, waLink } from '@/lib/content';
 
 const LINKS = [
+  ['Our work', '#work'],
   ['Polos', '#garments'],
   ['Materials', '#materials'],
   ['Finishes', '#finishes'],
   ['Quality', '#quality'],
   ['Studio', '#studio'],
-  ['Our work', '#work'],
   ['Contact', '#quote'],
 ];
 
 export default function Nav() {
   const c = useContent();
   const [scrolled, setScrolled] = useState(false);
-  const [light, setLight] = useState(false);
+  const [light, setLight] = useState(true);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('');
   const { scrollYProgress } = useScroll();
@@ -45,7 +45,13 @@ export default function Nav() {
   return (
     <>
       <header className={`nav ${scrolled ? 'is-scrolled' : ''} ${light || open ? 'is-light' : ''}`}>
-        <div className="nav-inner">
+        <div
+          className="nav-inner"
+          onPointerMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
+          }}
+        >
           <a href="#top" className="brand" aria-label={`${c.brand.name} home`}>
             <img src="/images/mr-logo-wide.png" alt="" className="brand-logo" width="48" height="25" />
             <span className="brand-name">{c.brand.name.replace(/^MR\s*/i, '') || c.brand.name}</span>

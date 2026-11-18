@@ -1,176 +1,125 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useSpring, useMotionValue, useTransform, useReducedMotion } from 'framer-motion';
-import { MdArrowForward } from 'react-icons/md';
+import { AnimatePresence, motion, useScroll, useReducedMotion } from 'framer-motion';
+import { MdArrowForward, MdVerified, MdLocalShipping, MdPalette } from 'react-icons/md';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useContent, waLink } from '@/lib/content';
 import { useRange, CountUp } from '@/components/Motion';
 
 /*
-  Logo-stripe hero. Three diagonal panels — the same slanted strokes as
-  the MR logo — act as windows onto real photos. On scroll the outer
-  panels slide away and the middle one opens up to fill the screen.
+  Clean, light hero: says exactly what MR Apparel does, backed by a
+  bento grid of real visuals — each tile labelled with the service.
 */
 const EASE = [0.16, 1, 0.3, 1];
+const WORDS = ['corporates.', 'events.', 'sports teams.', 'schools.', 'brands.'];
 
-// Parallelogram leaning like the logo strokes ("\" — top left, bottom right)
-function stripe(cx, w, lean) {
-  return [
-    [cx - w / 2 - lean, 0],
-    [cx + w / 2 - lean, 0],
-    [cx + w / 2 + lean, 100],
-    [cx - w / 2 + lean, 100],
-  ];
-}
-const FULL = [
-  [0, 0],
-  [100, 0],
-  [100, 100],
-  [0, 100],
-];
-const toClip = (pts) => `polygon(${pts.map(([x, y]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`).join(', ')})`;
-const mix = (a, b, t) => a.map((p, i) => [p[0] + (b[i][0] - p[0]) * t, p[1] + (b[i][1] - p[1]) * t]);
-
-function Panel({ img, alt, from, to, progress, range, pointer, depth, delay, zoom }) {
-  const clip = useTransform(progress, (v) => {
-    const t = Math.min(1, Math.max(0, (v - range[0]) / (range[1] - range[0])));
-    const e = t * t * (3 - 2 * t);
-    return toClip(mix(from, to, e));
-  });
-  const px = useTransform(pointer, (v) => v * depth);
-  const scale = useRange(progress, [0, 1], [zoom, 1]);
+function RotatingWord() {
+  const [i, setI] = useState(0);
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (reduce) return;
+    const t = setInterval(() => setI((v) => (v + 1) % WORDS.length), 2200);
+    return () => clearInterval(t);
+  }, [reduce]);
   return (
-    <motion.div
-      className="xh-panel"
-      style={{ clipPath: clip, WebkitClipPath: clip, x: px }}
-      initial={{ y: '100%' }}
-      animate={{ y: '0%' }}
-      transition={{ duration: 1.3, delay, ease: EASE }}
+    <span className="ch-rotate">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={WORDS[i]}
+          className="ch-word"
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: '0%', opacity: 1 }}
+          exit={{ y: '-100%', opacity: 0 }}
+          transition={{ duration: 0.55, ease: EASE }}
+        >
+          {WORDS[i]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+function Tile({ className, img, label, sub, delay, contain, y }) {
+  return (
+    <motion.figure
+      className={`ch-tile ${className || ''}`}
+      initial={{ opacity: 0, y: 40, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1, delay, ease: EASE }}
     >
-      <motion.img src={img} alt={alt} style={{ scale }} draggable={false} />
-      <div className="xh-panel-shade" />
-    </motion.div>
+      <motion.div className="ch-tile-in" style={y ? { y } : undefined}>
+        <img src={img} alt={label} className={contain ? 'contain' : ''} draggable={false} />
+      </motion.div>
+      <figcaption>
+        <strong>{label}</strong>
+        {sub && <span>{sub}</span>}
+      </figcaption>
+    </motion.figure>
   );
 }
 
 export default function Hero() {
   const c = useContent();
   const ref = useRef(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
-  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.4 });
-  const pointer = useMotionValue(0);
-  const [narrow, setNarrow] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 860px)');
-    const on = () => setNarrow(mq.matches);
-    on();
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-
-  const copyOpacity = useRange(progress, [0, 0.25, 0.42], [1, 1, 0]);
-  const copyY = useRange(progress, [0, 0.42], [0, -90]);
-  const outroOpacity = useRange(progress, [0.55, 0.72], [0, 1]);
-  const outroY = useRange(progress, [0.55, 0.72], [60, 0]);
-  const hint = useRange(progress, [0, 0.06], [1, 0]);
-  const glow = useRange(progress, [0, 0.6], [1, 0.2]);
-
-  const photos = [
-    { img: '/images/corporate-banner.jpg', alt: 'Branded polos on display' },
-    { img: '/images/hero-banner.jpg', alt: 'Team wearing custom branded t-shirts' },
-    { img: '/images/works-showcase.jpg', alt: 'Custom printed t-shirts' },
-  ];
-  // desktop: stripes on the right; the middle one opens to full screen
-  const P = narrow ? [stripe(22, 22, 12), stripe(50, 22, 12), stripe(78, 22, 12)] : [stripe(56, 13, 9), stripe(72, 13, 9), stripe(88, 13, 9)];
-  const OUT = [stripe(20, 13, 9).map(([x, y]) => [x - 40, y]), FULL, stripe(120, 13, 9).map(([x, y]) => [x + 30, y])];
-  const [l1, ...rest] = c.hero.title.split('\n');
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const yA = useRange(scrollYProgress, [0, 1], [0, -40]);
+  const yB = useRange(scrollYProgress, [0, 1], [0, -70]);
   const stats = (c.stats || []).slice(0, 3);
 
   return (
-    <section
-      className="xhero"
-      ref={ref}
-      id="top"
-      data-theme="dark"
-      onPointerMove={(e) => !reduce && pointer.set((e.clientX / window.innerWidth - 0.5) * 2)}
-    >
-      <div className="xh-stage">
-        <motion.div className="xh-glow" style={{ opacity: glow }} />
-        <div className="xh-panels" aria-hidden>
-          {photos.map((p, i) => (
-            <Panel
-              key={i}
-              {...p}
-              from={P[i]}
-              to={OUT[i]}
-              progress={progress}
-              range={i === 1 ? [0.18, 0.62] : [0.12, 0.45]}
-              pointer={pointer}
-              depth={(i - 1) * -10}
-              delay={0.25 + i * 0.12}
-              zoom={1.18}
-            />
-          ))}
-        </div>
-        <div className="xh-veil" />
-
-        <motion.div className="xh-copy" style={{ opacity: copyOpacity, y: copyY }}>
-          <motion.div className="hero-pill" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.8, ease: EASE }}>
-            <span className="dot" />
-            {c.hero.eyebrow}
-          </motion.div>
-          <h1 className="display xh-title" aria-label={c.hero.title.replace('\n', ' ')}>
-            {[l1, rest.join(' ')].filter(Boolean).map((line, i) => (
-              <span key={i} className="xh-line">
-                <motion.span
-                  className={i === 1 ? 'xh-accent' : ''}
-                  initial={{ y: '110%', rotate: 4 }}
-                  animate={{ y: '0%', rotate: 0 }}
-                  transition={{ delay: 0.3 + i * 0.14, duration: 1.1, ease: EASE }}
-                >
-                  {line}
-                </motion.span>
-              </span>
-            ))}
-          </h1>
-          <motion.p className="xh-sub" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.9, ease: EASE }}>
-            {c.hero.subtitle}
+    <section className="chero" ref={ref} id="top" data-theme="light">
+      <div className="ch-bg" aria-hidden>
+        <span className="ch-stroke s1" />
+        <span className="ch-stroke s2" />
+        <span className="ch-stroke s3" />
+      </div>
+      <div className="container ch-grid">
+        <div className="ch-copy">
+          <motion.p className="ch-eyebrow" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>
+            <span className="dot" /> Custom apparel studio · Sri Lanka
           </motion.p>
-          <motion.div className="xh-actions" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.9, ease: EASE }}>
+          <motion.h1 className="ch-title" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.08, ease: EASE }}>
+            Custom polos &amp; t&#8209;shirts for <RotatingWord />
+          </motion.h1>
+          <motion.p className="ch-sub" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.18, ease: EASE }}>
+            We design, embroider and print premium uniforms and merch, from 10 pieces to 10,000, delivered island-wide.
+          </motion.p>
+          <motion.div className="ch-actions" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.28, ease: EASE }}>
             <a href="#quote" className="btn btn-lg">
-              Get a quote <MdArrowForward />
+              Get a free quote <MdArrowForward />
             </a>
-            <a href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}! I'd like a quote.`)} target="_blank" rel="noreferrer" className="btn btn-lg btn-glass">
-              <FaWhatsapp /> WhatsApp us
+            <a href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}! I'd like a quote.`)} target="_blank" rel="noreferrer" className="btn btn-lg btn-outline">
+              <FaWhatsapp color="#25d366" /> WhatsApp us
             </a>
           </motion.div>
-          <motion.div className="xh-chips" initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 1 } } }}>
-            {(c.techniques || []).map((t) => (
-              <motion.span key={t.name} className="xh-chip" variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}>
-                {t.name}
-              </motion.span>
+          <motion.ul className="ch-points" initial="h" animate="s" variants={{ s: { transition: { staggerChildren: 0.08, delayChildren: 0.4 } } }}>
+            {[
+              [MdVerified, 'Sample before bulk'],
+              [MdPalette, 'Pantone colour matching'],
+              [MdLocalShipping, 'Island-wide delivery'],
+            ].map(([Icon, t]) => (
+              <motion.li key={t} variants={{ h: { opacity: 0, y: 10 }, s: { opacity: 1, y: 0 } }}>
+                <Icon /> {t}
+              </motion.li>
             ))}
-          </motion.div>
-        </motion.div>
-
-        <motion.div className="xh-outro" style={{ opacity: outroOpacity, y: outroY }}>
-          <p className="kicker">Made for teams</p>
-          <h2 className="h1">From 10 pieces to 10,000.</h2>
-          <div className="xh-stats">
+          </motion.ul>
+          <motion.div className="ch-stats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6, duration: 0.8 }}>
             {stats.map((s) => (
-              <div key={s.label} className="xh-stat">
+              <div key={s.label}>
                 <CountUp value={s.value} suffix={s.suffix} />
                 <span>{s.label}</span>
               </div>
             ))}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
-        <motion.div className="scroll-hint" style={{ opacity: hint }}>
-          Scroll
-        </motion.div>
+        <div className="ch-bento">
+          <Tile className="t-big" img="/images/hero-banner.jpg" label="Corporate uniforms" sub="Embroidered team polos & tees" delay={0.15} y={yA} />
+          <Tile className="t-polo" img="/images/range/signature-polo.webp" label="Piqué polos" sub="From LKR 2,200" delay={0.28} contain y={yB} />
+          <Tile className="t-a" img="/images/works-showcase.jpg" label="DTF & screen print" delay={0.38} y={yA} />
+          <Tile className="t-b" img="/images/corporate-banner.jpg" label="Brand merch" delay={0.48} y={yB} />
+        </div>
       </div>
     </section>
   );
