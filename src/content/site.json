@@ -590,7 +590,7 @@
     }
   ],
   "admin": {
-    "passwordHash": "9d74fb421364bb53e9a7212d973402dcbaa00ac98e52787e6c4aba63f2771942",
+    "passwordHash": "617ba24695833abeadad032410903d8dce45c83a240976b6db88930a213515c0",
     "repo": "Ravindu-Hettiarachchi/mr-apparel",
     "branch": "main",
     "contentPath": "src/content/site.json"
