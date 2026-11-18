@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Component, useEffect, useMemo, useState } from 'react';
 import base from '@/content/site.json';
-import { DRAFT_KEY, PREVIEW_KEY, readDraft } from '@/lib/content';
+import { DRAFT_KEY, PREVIEW_KEY, readDraft, saveDraft } from '@/lib/content';
 import { publishContent, sha256, checkAccess } from '@/lib/github';
 import {
   MdLogout,
@@ -255,6 +255,36 @@ function ArrayEditor({ name, value, onChange, template }) {
   );
 }
 
+/* ---------------- safety net ---------------- */
+class EditorBoundary extends Component {
+  state = { err: null };
+  static getDerivedStateFromError(err) {
+    return { err };
+  }
+  render() {
+    if (!this.state.err) return this.props.children;
+    return (
+      <div className="a-settings">
+        <section>
+          <h2>This section couldn&apos;t be shown</h2>
+          <p className="a-help">Something in your saved draft doesn&apos;t match the site any more. Resetting the draft loads the live version again (your published content is not affected).</p>
+          <button
+            className="a-btn a-btn-filled"
+            onClick={() => {
+              try {
+                localStorage.removeItem(DRAFT_KEY);
+              } catch {}
+              location.reload();
+            }}
+          >
+            Reset draft &amp; reload
+          </button>
+        </section>
+      </div>
+    );
+  }
+}
+
 /* ---------------- login ---------------- */
 function Login({ hash, onOk }) {
   const [pw, setPw] = useState('');
@@ -276,7 +306,7 @@ function Login({ hash, onOk }) {
   return (
     <div className="a-login">
       <form className="a-login-card" onSubmit={submit}>
-        <div className="a-logo">{base.brand.logoText}</div>
+        <img className="a-logo-img" src={base.brand.logo || '/images/mr-logo-wide.png'} alt={base.brand.name} />
         <h1>{setup ? 'Create admin password' : 'Admin sign in'}</h1>
         <p>{setup ? 'This password protects the editor on this site.' : `Manage ${base.brand.name} website content.`}</p>
         <label className="a-field">
@@ -328,7 +358,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!ready || !authed) return;
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+      saveDraft(data);
     } catch {
       setStatus({ type: 'error', msg: 'Draft is too large for browser storage — publish to save your images.' });
     }
@@ -402,7 +432,7 @@ export default function AdminPage() {
     <div className="a-app">
       <aside className="a-side">
         <div className="a-side-brand">
-          <div className="a-logo sm">{data.brand.logoText}</div>
+          <img className="a-logo-img sm" src={data.brand?.logo || base.brand.logo || '/images/mr-logo-wide.png'} alt="" />
           <div>
             <strong>{data.brand.name}</strong>
             <small>Content editor</small>
@@ -460,6 +490,7 @@ export default function AdminPage() {
         )}
 
         <div className="a-card">
+          <EditorBoundary key={tab}>
           {tab === 'settings' ? (
             <div className="a-settings">
               <section>
@@ -546,11 +577,12 @@ export default function AdminPage() {
                 </div>
               </section>
             </div>
-          ) : Array.isArray(data[tab]) ? (
-            <ArrayEditor value={data[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} template={TEMPLATES[tab]} />
+          ) : Array.isArray(data[tab] ?? base[tab]) ? (
+            <ArrayEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} template={TEMPLATES[tab]} />
           ) : (
-            <ObjectEditor value={data[tab]} onChange={(v) => setData({ ...data, [tab]: v })} />
+            <ObjectEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} />
           )}
+          </EditorBoundary>
         </div>
       </main>
     </div>

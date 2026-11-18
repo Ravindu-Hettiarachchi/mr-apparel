@@ -59,7 +59,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div>
             <a href="#top" className="brand" style={{ color: 'var(--ink)' }}>
-              <span className="brand-mark">{c.brand.logoText}</span>
+              <img src={c.brand.logo || '/images/mr-logo-wide.png'} alt="" className="brand-logo footer-logo" width="58" height="31" />
               {c.brand.name}
             </a>
             <p style={{ maxWidth: 340, margin: '16px 0 20px' }}>{c.brand.description}</p>

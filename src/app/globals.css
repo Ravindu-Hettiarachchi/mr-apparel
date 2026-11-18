@@ -3323,3 +3323,12 @@ button {
 .mh-title .mh-accent::after {
   display: none;
 }
+
+/* footer: keep content clear of the floating WhatsApp button */
+.footer {
+  padding-bottom: 104px;
+}
+.footer-logo {
+  height: 30px !important;
+  width: auto;
+}
