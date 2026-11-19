@@ -504,7 +504,7 @@
   ],
   "works": [
     {
-      "title": "company t shirst",
+      "title": "company uniform",
       "category": "Corporate polo",
       "text": "Embroidered piqué polos for a 30-person team.",
       "image": "/uploads/1795069781227-0.jpg",
@@ -522,7 +522,7 @@
       "year": "2026"
     },
     {
-      "title": "comapany t shirts",
+      "title": "comapany uniform",
       "client": "green gate plantation",
       "category": "Corporate polo",
       "quantity": "50",
@@ -531,13 +531,22 @@
       "image": "/uploads/1795070198373-0.jpg"
     },
     {
-      "title": "",
-      "client": "",
-      "category": "",
-      "quantity": "",
-      "year": "",
+      "title": "company uniform",
+      "client": "mahen jecob ( No zero kandy )",
+      "category": "Corporate polo",
+      "quantity": "60",
+      "year": "2025",
       "text": "",
-      "image": ""
+      "image": "/uploads/1795070805591-0.jpg"
+    },
+    {
+      "title": "company t shirts",
+      "client": "aqua planet aquarium",
+      "category": "Corporate polo",
+      "quantity": "100",
+      "year": "2025",
+      "text": "",
+      "image": "/uploads/1795070809417-1.jpg"
     }
   ],
   "testimonials": [],
