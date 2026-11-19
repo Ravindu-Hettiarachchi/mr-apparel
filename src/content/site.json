@@ -53,9 +53,9 @@
         "alt": "Navy piqué polo"
       },
       {
-        "image": "/images/corporate-banner.jpg",
+        "image": "/uploads/1795092202945-0.webp",
         "fit": "cover",
-        "bgColor": "#dddddd",
+        "bgColor": "#ffffff",
         "alt": "Branded polos on display"
       },
       {
@@ -89,9 +89,9 @@
         "alt": "Red tipped polo"
       },
       {
-        "image": "/images/sublimation-showcase.jpg",
+        "image": "/uploads/1795092206704-1.webp",
         "fit": "cover",
-        "bgColor": "#dddddd",
+        "bgColor": "#ffffff",
         "alt": "Sublimated sports kits"
       },
       {
@@ -662,20 +662,6 @@
       "image": "/uploads/1795089966379-1.webp",
       "fit": "contain",
       "link": "#garments"
-    },
-    {
-      "label": "Corporate uniforms",
-      "sub": "Teams of 10 to 1,000+",
-      "image": "/images/hero-banner.jpg",
-      "fit": "cover",
-      "link": "#work"
-    },
-    {
-      "label": "Event merch",
-      "sub": "Launches, runs & festivals",
-      "image": "/images/sublimation-showcase.jpg",
-      "fit": "cover",
-      "link": "#work"
     }
   ],
   "ticker": [
