@@ -662,6 +662,13 @@
       "image": "/uploads/1795089966379-1.webp",
       "fit": "contain",
       "link": "#garments"
+    },
+    {
+      "label": "sport jersey",
+      "sub": "",
+      "image": "",
+      "fit": "cover",
+      "filter": ""
     }
   ],
   "ticker": [
