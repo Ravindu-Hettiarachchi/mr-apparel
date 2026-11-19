@@ -19,6 +19,8 @@ import {
   MdCheckCircle,
   MdError,
   MdImage,
+  MdWarningAmber,
+  MdInfoOutline,
 } from 'react-icons/md';
 
 const TOKEN_KEY = 'mr-apparel:gh-token';
@@ -49,6 +51,7 @@ const GROUPS = [
     ['brand', 'Brand & logo'],
     ['contact', 'Contact details'],
     ['socials', 'Social media'],
+    ['imageguide', 'Image size guide'],
     ['settings', 'Settings & publish'],
   ]],
 ];
@@ -77,31 +80,230 @@ function blank(v) {
   return '';
 }
 
-function resizeImage(file) {
+/* ---------------- image sizes: what each spot on the site actually needs ----------------
+   Sizes are 2x the on-screen size, so pictures stay sharp on retina screens. */
+const PHOTO = 'JPG or WebP';
+const CUTOUT = 'PNG or WebP with a transparent background';
+const SPEC = {
+  heroPhoto: { id: 'heroPhoto', title: 'Hero gallery: photo', where: 'Homepage hero, moving photo gallery', w: 1000, h: 1250, shape: '4:5 portrait', fit: 'cover', fmt: PHOTO, size: 'under 300 KB', tip: 'The edges can be trimmed, so keep the main subject in the middle. Using a product cut-out instead? Set "Image style" (below) to Product cut-out.' },
+  heroCutout: { id: 'heroCutout', title: 'Hero gallery: product cut-out', where: 'Homepage hero, moving photo gallery', w: 1000, h: 1250, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Centre the garment and leave about 8% empty space around it. Pick the tile background colour below.' },
+  catPhoto: { id: 'catPhoto', title: 'Category tile: photo', where: 'Homepage, the four tiles under the hero', w: 900, h: 1200, shape: '3:4 portrait', fit: 'cover', fmt: PHOTO, size: 'under 300 KB', tip: 'Keep the main subject in the middle. Using a product cut-out instead? Set "Image style" (below) to Product cut-out.' },
+  catCutout: { id: 'catCutout', title: 'Category tile: product cut-out', where: 'Homepage, the four tiles under the hero', w: 900, h: 1200, shape: '3:4 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Centre the garment with some empty space around it.' },
+  product: { id: 'product', title: 'Product: main picture', where: 'The range, product card', w: 900, h: 1125, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Use the same angle, size and position for every product so the grid looks even.' },
+  productColour: { id: 'productColour', title: 'Product: colour picture', where: 'The range, shown when this colour is picked', w: 900, h: 1125, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Match the main picture exactly (same angle, size and position) so the colour change looks smooth.' },
+  work: { id: 'work', title: 'Our work: portfolio photo', where: 'Our work grid and the pop-up viewer', w: 1200, h: 1500, shape: '4:5 portrait (square also works)', fit: 'free', fmt: PHOTO, size: 'under 400 KB', tip: 'Any height works. Keep the width at 1200 px or more.' },
+  finish: { id: 'finish', title: 'Finish: card picture', where: 'Finishes section, card picture', w: 1600, h: 1000, shape: '16:10 landscape', fit: 'cover', fmt: PHOTO, size: 'under 350 KB', tip: 'Leave this empty on Embroidery and Screen Printing to keep their animated illustration.' },
+  logo: { id: 'logo', title: 'Logo', where: 'Top bar, footer and admin', w: 240, h: 127, shape: 'wide, about 1.9:1', fit: 'contain', alpha: true, fmt: 'PNG with a transparent background', size: 'under 100 KB', tip: 'It is shown only about 30 px tall, so this size is plenty. The opening animation uses its own logo pieces and does not change when you replace this.' },
+};
+const SPEC_BY_PATH = {
+  'hero.lookbook[].image': (sib) => (sib?.fit === 'contain' ? SPEC.heroCutout : SPEC.heroPhoto),
+  'categories[].image': (sib) => (sib?.fit === 'contain' ? SPEC.catCutout : SPEC.catPhoto),
+  'garments[].image': () => SPEC.product,
+  'garments[].variants[].image': () => SPEC.productColour,
+  'works[].image': () => SPEC.work,
+  'techniques[].image': () => SPEC.finish,
+  'brand.logo': () => SPEC.logo,
+};
+const getSpec = (path, sib) => (path && SPEC_BY_PATH[path] ? SPEC_BY_PATH[path](sib) : null);
+const FIT_NOTE = {
+  cover: 'Shown cropped to this exact shape. The centre is kept.',
+  contain: 'Fits inside the frame without cropping, so a slightly different shape is fine.',
+  free: 'Shown at its natural shape, so any height works.',
+};
+
+// How much a picture must be scaled up to fill its spot (1 = exact, 2 = twice as big as it has pixels for).
+function upscale(nw, nh, spec) {
+  if (spec.fit === 'cover') return Math.max(spec.w / nw, spec.h / nh);
+  if (spec.fit === 'contain') return Math.min(spec.w / nw, spec.h / nh);
+  return spec.w / nw;
+}
+function checkFit({ w: nw, h: nh }, spec) {
+  const scale = upscale(nw, nh, spec);
+  const want = spec.w / spec.h;
+  const shapeOff = spec.fit === 'cover' && Math.abs(nw / nh - want) / want > 0.08;
+  if (scale > 1.5) return { type: 'bad', text: `Too small, so it will look blurry. Please upload at least ${Math.round(spec.w / 1.5)} × ${Math.round(spec.h / 1.5)} px (ideal ${spec.w} × ${spec.h}).` };
+  if (scale > 1.15) return { type: 'warn', text: `A little smaller than ideal. It works, but may look slightly soft on big screens.${shapeOff ? ` The shape also differs, so it will be cropped to ${spec.shape}.` : ''}` };
+  if (shapeOff) return { type: 'warn', text: `The size is fine, but the shape is different, so it will be cropped to ${spec.shape}. Keep the subject in the centre.` };
+  return { type: 'ok', text: 'Perfect, this fits the spot.' };
+}
+
+// Shrinks big uploads to just what the spot needs (never enlarges), keeping transparency.
+function resizeImage(file, spec) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
+      const ow = img.naturalWidth || img.width;
+      const oh = img.naturalHeight || img.height;
       const alpha = /png|webp|gif|svg/.test(file.type);
-      const max = alpha ? 1100 : 1600; // cut-outs are shown small, photos need more room
-      const sc = Math.min(1, max / Math.max(img.width, img.height));
+      // upscale() is the factor that makes the picture exactly fill its spot; below 1 means it has pixels to spare
+      const sc = Math.min(1, spec ? upscale(ow, oh, spec) : 1600 / Math.max(ow, oh));
       const c = document.createElement('canvas');
-      c.width = Math.round(img.width * sc);
-      c.height = Math.round(img.height * sc);
+      c.width = Math.max(1, Math.round(ow * sc));
+      c.height = Math.max(1, Math.round(oh * sc));
       c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      if (!alpha) return resolve(c.toDataURL('image/jpeg', 0.84));
-      // keep transparency: WebP where the browser can encode it, otherwise PNG
-      const w = c.toDataURL('image/webp', 0.86);
-      resolve(w.startsWith('data:image/webp') ? w : c.toDataURL('image/png'));
+      let dataUrl;
+      if (!alpha) dataUrl = c.toDataURL('image/jpeg', 0.84);
+      else {
+        // keep transparency: WebP where the browser can encode it, otherwise PNG
+        const w = c.toDataURL('image/webp', 0.86);
+        dataUrl = w.startsWith('data:image/webp') ? w : c.toDataURL('image/png');
+      }
+      resolve({ dataUrl, ow, oh, w: c.width, h: c.height, alpha, kb: Math.round((dataUrl.length * 0.75) / 1024) });
     };
-    img.onerror = reject;
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('unreadable'));
+    };
     img.src = url;
   });
 }
 
 /* ---------------- generic editors ---------------- */
-function Field({ name, value, onChange, template }) {
+const VERDICT_ICON = { ok: MdCheckCircle, warn: MdWarningAmber, bad: MdError, info: MdInfoOutline };
+function Verdict({ type, children }) {
+  const Icon = VERDICT_ICON[type] || MdInfoOutline;
+  return (
+    <p className={`a-verdict ${type}`}>
+      <Icon size={18} />
+      <span>{children}</span>
+    </p>
+  );
+}
+
+function ImageField({ name, value, onChange, path, siblings }) {
+  const v = value ?? '';
+  const spec = getSpec(path, siblings);
+  const [dims, setDims] = useState(null); // real size of the picture currently shown
+  const [broken, setBroken] = useState(false);
+  const [note, setNote] = useState(null);
+  const verdict = dims && spec ? checkFit(dims, spec) : null;
+
+  useEffect(() => {
+    if (!v) {
+      setDims(null);
+      setBroken(false);
+    }
+  }, [v]);
+
+  const upload = async (e) => {
+    const f = e.target.files?.[0];
+    e.target.value = '';
+    if (!f) return;
+    try {
+      const r = await resizeImage(f, spec);
+      onChange(r.dataUrl);
+      const needsAlpha = spec?.alpha && !r.alpha;
+      setNote({
+        type: needsAlpha ? 'warn' : 'info',
+        text: `Your file was ${r.ow} × ${r.oh} px. Saved as ${r.w} × ${r.h} px (about ${r.kb} KB).${needsAlpha ? ' This spot looks best with a transparent PNG or WebP. A JPG has a solid background.' : ''}`,
+      });
+    } catch {
+      setNote({ type: 'bad', text: "That file couldn't be read. Please use a JPG, PNG or WebP image." });
+    }
+  };
+
+  const frameStyle = spec && spec.fit !== 'free' ? { aspectRatio: `${spec.w} / ${spec.h}` } : undefined;
+  return (
+    <div className="a-field">
+      <span>{name === 'logo' ? 'Logo image' : 'Image'}</span>
+      <div className="a-image">
+        <div className={`a-frame ${spec ? spec.fit : 'none'} ${spec?.alpha ? 'checker' : ''}`} style={frameStyle}>
+          {v ? (
+            <img
+              src={v}
+              alt=""
+              onLoad={(e) => {
+                setBroken(false);
+                setDims({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight });
+              }}
+              onError={() => {
+                setDims(null);
+                setBroken(true);
+              }}
+            />
+          ) : (
+            <MdImage size={28} />
+          )}
+        </div>
+        <div className="a-image-main">
+          {spec && (
+            <div className="a-spec">
+              <div className="a-spec-head">
+                <b>
+                  {spec.w} × {spec.h} px
+                </b>
+                <span>{spec.shape}</span>
+              </div>
+              <dl>
+                <dt>Used for</dt>
+                <dd>{spec.where}</dd>
+                <dt>Format</dt>
+                <dd>
+                  {spec.fmt}, {spec.size}
+                </dd>
+                <dt>Fit</dt>
+                <dd>{FIT_NOTE[spec.fit]}</dd>
+              </dl>
+              {spec.tip && <p className="a-spec-tip">{spec.tip}</p>}
+            </div>
+          )}
+          <div className="a-image-actions">
+            <label className="a-btn a-btn-tonal">
+              <MdUpload /> {v ? 'Replace' : 'Upload'}
+              <input type="file" accept="image/png,image/jpeg,image/webp" hidden onChange={upload} />
+            </label>
+            {v && (
+              <button
+                className="a-btn a-btn-text"
+                onClick={() => {
+                  onChange('');
+                  setNote(null);
+                }}
+              >
+                Remove
+              </button>
+            )}
+            <input className="a-path" placeholder="/images/… or https://…" value={v.startsWith('data:') ? '(new upload — saved on publish)' : v} onChange={(e) => onChange(e.target.value)} disabled={v.startsWith('data:')} />
+          </div>
+          {broken && <Verdict type="bad">No picture was found at this address.</Verdict>}
+          {!broken && dims && (
+            <p className="a-current">
+              Current picture: <b>{dims.w} × {dims.h} px</b>
+            </p>
+          )}
+          {verdict && <Verdict type={verdict.type}>{verdict.text}</Verdict>}
+          {note && <Verdict type={note.type}>{note.text}</Verdict>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PasswordInput({ value, onChange, show, onToggle, placeholder, autoComplete, autoFocus, label, className = '' }) {
+  return (
+    <div className={`a-pw ${className}`}>
+      <input
+        className="a-input a-pw-input"
+        type={show ? 'text' : 'password'}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
+        aria-label={label}
+        spellCheck={false}
+        autoCapitalize="off"
+      />
+      <button type="button" className="a-pw-toggle" onClick={onToggle} aria-label={show ? 'Hide password' : 'Show password'} aria-pressed={show} title={show ? 'Hide password' : 'Show password'}>
+        {show ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
+      </button>
+    </div>
+  );
+}
+
+function Field({ name, value, onChange, template, path, siblings }) {
   if (typeof value === 'number') {
     return (
       <label className="a-field">
@@ -110,12 +312,12 @@ function Field({ name, value, onChange, template }) {
       </label>
     );
   }
-  if (Array.isArray(value)) return <ArrayEditor name={name} value={value} onChange={onChange} template={template} />;
+  if (Array.isArray(value)) return <ArrayEditor name={name} value={value} onChange={onChange} template={template} path={path} />;
   if (value && typeof value === 'object') {
     return (
       <fieldset className="a-group">
         <legend>{pretty(name)}</legend>
-        <ObjectEditor value={value} onChange={onChange} />
+        <ObjectEditor value={value} onChange={onChange} path={path} />
       </fieldset>
     );
   }
@@ -134,36 +336,7 @@ function Field({ name, value, onChange, template }) {
       </label>
     );
   }
-  if (isImageKey(name)) {
-    return (
-      <div className="a-field">
-        <span>{name === 'logo' ? 'Logo image' : 'Image'}</span>
-        <div className="a-image">
-          {v ? <img src={v} alt="" /> : <div className="a-image-empty"><MdImage size={28} /></div>}
-          <div className="a-image-actions">
-            <label className="a-btn a-btn-tonal">
-              <MdUpload /> {v ? 'Replace' : 'Upload'}
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={async (e) => {
-                  const f = e.target.files?.[0];
-                  if (f) onChange(await resizeImage(f));
-                }}
-              />
-            </label>
-            {v && (
-              <button className="a-btn a-btn-text" onClick={() => onChange('')}>
-                Remove
-              </button>
-            )}
-            <input className="a-path" placeholder="/images/… or https://…" value={v.startsWith('data:') ? '(new upload — saved on publish)' : v} onChange={(e) => onChange(e.target.value)} disabled={v.startsWith('data:')} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (isImageKey(name)) return <ImageField name={name} value={v} onChange={onChange} path={path} siblings={siblings} />;
   if (/color|hex/i.test(name)) {
     return (
       <label className="a-field">
@@ -184,7 +357,7 @@ function Field({ name, value, onChange, template }) {
   );
 }
 
-function ObjectEditor({ value, onChange, skip = [] }) {
+function ObjectEditor({ value, onChange, skip = [], path = '' }) {
   const NESTED = { lookbook: TEMPLATES.lookbook, variants: TEMPLATES.garments.variants[0] };
   return (
     <div className="a-grid">
@@ -192,14 +365,14 @@ function ObjectEditor({ value, onChange, skip = [] }) {
         .filter(([k]) => !skip.includes(k))
         .map(([k, v]) => (
           <div key={k} className={Array.isArray(v) || (v && typeof v === 'object') || isImageKey(k) || LONG.includes(k) ? 'a-span' : ''}>
-            <Field name={k} value={v} template={NESTED[k]} onChange={(nv) => onChange({ ...value, [k]: nv })} />
+            <Field name={k} value={v} template={NESTED[k]} path={path ? `${path}.${k}` : k} siblings={value} onChange={(nv) => onChange({ ...value, [k]: nv })} />
           </div>
         ))}
     </div>
   );
 }
 
-function ArrayEditor({ name, value, onChange, template }) {
+function ArrayEditor({ name, value, onChange, template, path = '' }) {
   const tpl = template ?? value[0];
   const move = (i, d) => {
     const a = [...value];
@@ -241,7 +414,7 @@ function ArrayEditor({ name, value, onChange, template }) {
           </summary>
           <div className="a-item-body">
             {typeof it === 'object' ? (
-              <ObjectEditor value={it} onChange={(nv) => onChange(value.map((x, k) => (k === i ? nv : x)))} />
+              <ObjectEditor value={it} path={`${path}[]`} onChange={(nv) => onChange(value.map((x, k) => (k === i ? nv : x)))} />
             ) : (
               <input value={it} onChange={(e) => onChange(value.map((x, k) => (k === i ? e.target.value : x)))} />
             )}
@@ -285,10 +458,65 @@ class EditorBoundary extends Component {
   }
 }
 
+/* ---------------- image size guide ---------------- */
+function ImageGuide() {
+  return (
+    <div className="a-guide">
+      <p className="a-help">
+        Upload pictures at these sizes for the sharpest result. Pictures bigger than the size are shrunk automatically when you upload. Smaller ones are never stretched, but can look soft. The exact size for each picture is also shown next to its upload button.
+      </p>
+      <div className="a-table-wrap">
+        <table className="a-table">
+          <thead>
+            <tr>
+              <th>Picture</th>
+              <th>Size (px)</th>
+              <th>Shape</th>
+              <th>Format</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.values(SPEC).map((x) => (
+              <tr key={x.id}>
+                <td>
+                  <b>{x.title}</b>
+                  <small>{x.where}</small>
+                </td>
+                <td className="num">
+                  {x.w} × {x.h}
+                </td>
+                <td>
+                  <i className="a-shape" style={{ aspectRatio: `${x.w} / ${x.h}` }} />
+                  {x.shape}
+                </td>
+                <td>
+                  {x.fmt}
+                  <small>{x.size}</small>
+                </td>
+                <td>
+                  {FIT_NOTE[x.fit]} {x.tip}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul className="a-tips">
+        <li>File names don&apos;t matter. Only the picture itself does.</li>
+        <li>Use JPG for photos and PNG or WebP for cut-outs that need a transparent background.</li>
+        <li>For product colours, shoot or render every colour from the same angle, with the same size and position.</li>
+        <li>Pictures are saved when you press Publish, so keep each one small to keep the site fast.</li>
+      </ul>
+    </div>
+  );
+}
+
 /* ---------------- login ---------------- */
 function Login({ hash, onOk }) {
   const [pw, setPw] = useState('');
   const [pw2, setPw2] = useState('');
+  const [show, setShow] = useState(false);
   const [err, setErr] = useState('');
   const setup = !hash;
   const submit = async (e) => {
@@ -309,15 +537,21 @@ function Login({ hash, onOk }) {
         <img className="a-logo-img" src={base.brand.logo || '/images/mr-logo-wide.png'} alt={base.brand.name} />
         <h1>{setup ? 'Create admin password' : 'Admin sign in'}</h1>
         <p>{setup ? 'This password protects the editor on this site.' : `Manage ${base.brand.name} website content.`}</p>
-        <label className="a-field">
+        <div className="a-field">
           <span>Password</span>
-          <input type="password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} autoComplete={setup ? 'new-password' : 'current-password'} />
-        </label>
+          <PasswordInput label="Password" autoFocus value={pw} onChange={(e) => setPw(e.target.value)} show={show} onToggle={() => setShow((x) => !x)} autoComplete={setup ? 'new-password' : 'current-password'} />
+        </div>
         {setup && (
-          <label className="a-field">
+          <div className="a-field">
             <span>Confirm password</span>
-            <input type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} autoComplete="new-password" />
-          </label>
+            <PasswordInput label="Confirm password" value={pw2} onChange={(e) => setPw2(e.target.value)} show={show} onToggle={() => setShow((x) => !x)} autoComplete="new-password" />
+          </div>
+        )}
+        {setup && (
+          <ul className="a-pw-hints">
+            <li className={pw.length >= 8 ? 'ok' : ''}>At least 8 characters</li>
+            <li className={pw2 && pw === pw2 ? 'ok' : ''}>Both passwords match</li>
+          </ul>
         )}
         {err && <div className="a-err">{err}</div>}
         <button className="a-btn a-btn-filled a-btn-lg" type="submit">
@@ -342,6 +576,8 @@ export default function AdminPage() {
   const [status, setStatus] = useState(null); // {type, msg}
   const [busy, setBusy] = useState(false);
   const [newPw, setNewPw] = useState('');
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showToken, setShowToken] = useState(false);
 
   useEffect(() => {
     try {
@@ -491,7 +727,9 @@ export default function AdminPage() {
 
         <div className="a-card">
           <EditorBoundary key={tab}>
-          {tab === 'settings' ? (
+          {tab === 'imageguide' ? (
+            <ImageGuide />
+          ) : tab === 'settings' ? (
             <div className="a-settings">
               <section>
                 <h2>Publishing</h2>
@@ -503,12 +741,15 @@ export default function AdminPage() {
                   with <b>Contents: Read and write</b> access to only this repository. The token is stored only in this browser.
                 </p>
                 <div className="a-grid">
-                  <label className="a-field a-span">
+                  <div className="a-field a-span">
                     <span>GitHub token</span>
-                    <input
-                      type="password"
+                    <PasswordInput
+                      label="GitHub token"
                       value={token}
                       placeholder="github_pat_…"
+                      show={showToken}
+                      onToggle={() => setShowToken((x) => !x)}
+                      autoComplete="off"
                       onChange={(e) => {
                         setToken(e.target.value);
                         try {
@@ -516,7 +757,7 @@ export default function AdminPage() {
                         } catch {}
                       }}
                     />
-                  </label>
+                  </div>
                   <Field name="repo" value={data.admin.repo} onChange={(v) => setData({ ...data, admin: { ...data.admin, repo: v } })} />
                   <Field name="branch" value={data.admin.branch} onChange={(v) => setData({ ...data, admin: { ...data.admin, branch: v } })} />
                 </div>
@@ -538,7 +779,7 @@ export default function AdminPage() {
                 <h2>Admin password</h2>
                 <p className="a-help">The new password takes effect after you publish.</p>
                 <div className="a-row">
-                  <input className="a-input" type="password" placeholder="New password (8+ characters)" value={newPw} onChange={(e) => setNewPw(e.target.value)} autoComplete="new-password" />
+                  <PasswordInput label="New password" placeholder="New password (8+ characters)" value={newPw} onChange={(e) => setNewPw(e.target.value)} show={showNewPw} onToggle={() => setShowNewPw((x) => !x)} autoComplete="new-password" />
                   <button
                     className="a-btn a-btn-tonal"
                     onClick={async () => {
@@ -552,6 +793,9 @@ export default function AdminPage() {
                     Change password
                   </button>
                 </div>
+                <ul className="a-pw-hints">
+                  <li className={newPw.length >= 8 ? 'ok' : ''}>At least 8 characters</li>
+                </ul>
               </section>
               <section>
                 <h2>Backup</h2>
@@ -578,9 +822,9 @@ export default function AdminPage() {
               </section>
             </div>
           ) : Array.isArray(data[tab] ?? base[tab]) ? (
-            <ArrayEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} template={TEMPLATES[tab]} />
+            <ArrayEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} name={section?.[1]} template={TEMPLATES[tab]} path={tab} />
           ) : (
-            <ObjectEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} />
+            <ObjectEditor value={data[tab] ?? base[tab]} onChange={(v) => setData({ ...data, [tab]: v })} path={tab} />
           )}
           </EditorBoundary>
         </div>
