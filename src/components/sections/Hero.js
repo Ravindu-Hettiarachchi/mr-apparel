@@ -5,6 +5,7 @@ import { motion, useScroll, useReducedMotion } from 'framer-motion';
 import { MdArrowForward, MdNorthEast } from 'react-icons/md';
 import { useContent, waLink } from '@/lib/content';
 import { useIntroReady } from '@/components/Intro';
+import { goToWork } from '@/lib/workFilter';
 import { useRange } from '@/components/Motion';
 import { FaWhatsapp } from 'react-icons/fa';
 
@@ -127,13 +128,13 @@ export default function Hero() {
               <FaWhatsapp color="#25d366" /> {h.whatsappButton}
             </a>
           </motion.div>
-          <motion.a href="#garments" className="mh-range" variants={up(0.7, 12)}>
+          <motion.a href="#work" onClick={(e) => goToWork(e, 'All')} className="mh-range" variants={up(0.7, 12)}>
             <span className="mh-range-dots">
               {['#1d2a44', '#b3261e', '#0f6b4f', '#2a56c6', '#f2b632', '#f1f0ec'].map((h) => (
                 <i key={h} style={{ background: h }} />
               ))}
             </span>
-            {h.rangeLink} <MdNorthEast />
+            {h.workLink} <MdNorthEast />
           </motion.a>
         </motion.div>
       </div>
@@ -145,11 +146,15 @@ export function Categories() {
   const c = useContent();
   const CATS = c.categories || [];
   if (!CATS.length) return null;
+  const n = CATS.length;
+  const cols = n <= 5 ? n : n === 6 ? 3 : 4; // keep the tiles balanced however many are added
   return (
     <section className="section" data-theme="light" style={{ paddingTop: 'clamp(48px, 7vw, 88px)', paddingBottom: 'clamp(48px, 7vw, 88px)' }}>
       <div className="container">
         <motion.div
           className="cats"
+          data-n={n}
+          style={{ '--cols': cols }}
           initial="hidden"
           whileInView="show"
           viewport={{ once: false, amount: 0.2 }}
@@ -158,7 +163,8 @@ export function Categories() {
           {CATS.map((cat) => (
             <motion.a
               key={cat.label + cat.image}
-              href={cat.link || '#garments'}
+              href="#work"
+              onClick={(e) => goToWork(e, cat.filter || cat.label)}
               className={`cat ${cat.fit === 'contain' ? 'product' : 'photo'}`}
               variants={{
                 hidden: { opacity: 0, y: 50, clipPath: 'inset(18% 0 0 0 round 16px)' },

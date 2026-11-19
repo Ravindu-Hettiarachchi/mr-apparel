@@ -157,7 +157,7 @@ function FinishCard({ t, i }) {
 
 export default function Finishes() {
   const c = useContent();
-  const list = c.techniques || [];
+  const list = (c.techniques || []).filter((t) => t.name?.trim()); // skip blank entries
   return (
     <section className="section" id="finishes" data-theme="light" style={{ background: 'var(--surface-1)' }}>
       <div className="container">

@@ -42,24 +42,40 @@ export function saveDraft(data) {
     return;
   }
   const picked = {};
-  touched.forEach((k) => (picked[k] = data[k]));
-  localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 2, baseHash: fingerprint(base), touched, data: picked }));
+  const hashes = {};
+  touched.forEach((k) => {
+    picked[k] = data[k];
+    hashes[k] = fingerprint(base[k]);
+  });
+  localStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 3, touched, hashes, data: picked }));
 }
 
-/** Returns the live content with your unpublished edits applied, or null. */
+/**
+ * Returns the live content with your unpublished edits applied, or null.
+ * A section's draft is only used while that section is unchanged on the live
+ * site, so an old draft can never overwrite content that was published since.
+ */
 export function readDraft() {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
     if (!raw) return null;
     const d = JSON.parse(raw);
-    if (d?.v !== 2 || !Array.isArray(d.touched)) {
-      localStorage.removeItem(DRAFT_KEY); // old-format draft: can't be trusted, drop it
+    if (d?.v !== 3 || !Array.isArray(d.touched)) {
+      localStorage.removeItem(DRAFT_KEY); // older format: can't be trusted, drop it
       return null;
     }
     const out = clone(base);
+    let used = 0;
     d.touched.forEach((k) => {
-      if (k in base && d.data && k in d.data) out[k] = shapeLike(base[k], d.data[k]);
+      if (k in base && d.data && k in d.data && d.hashes?.[k] === fingerprint(base[k])) {
+        out[k] = shapeLike(base[k], d.data[k]);
+        used++;
+      }
     });
+    if (!used) {
+      localStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
     return out;
   } catch {
     return null;

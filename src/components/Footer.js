@@ -4,6 +4,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 import { MdArrowForward } from 'react-icons/md';
 import { motion } from 'framer-motion';
 import { useContent, waLink, sec } from '@/lib/content';
+import { goToWork } from '@/lib/workFilter';
 import { Reveal, SplitWords } from '@/components/Motion';
 import { SocialLinks } from '@/components/sections/Quote';
 
@@ -66,11 +67,13 @@ export default function Footer() {
             <SocialLinks socials={c.socials} />
           </div>
           <div>
-            <h5>Products</h5>
+            <h5>What we make</h5>
             <ul>
-              {c.garments.slice(0, 5).map((g) => (
-                <li key={g.name}>
-                  <a href="#garments">{g.name}</a>
+              {(c.categories || []).map((t) => (
+                <li key={t.label}>
+                  <a href="#work" onClick={(e) => goToWork(e, t.filter || t.label)}>
+                    {t.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -78,7 +81,7 @@ export default function Footer() {
           <div>
             <h5>Finishes</h5>
             <ul>
-              {c.techniques.map((t) => (
+              {(c.techniques || []).filter((t) => t.name?.trim()).map((t) => (
                 <li key={t.name}>
                   <a href="#finishes">{t.name}</a>
                 </li>

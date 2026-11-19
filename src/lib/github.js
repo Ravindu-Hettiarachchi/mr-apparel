@@ -74,10 +74,27 @@ export async function uploadImages(token, repo, branch, content, onStep) {
   return copy;
 }
 
+// If the site's content layout changed since this admin page was loaded, publishing would overwrite it.
+async function assertSameSchema(token, repo, branch, path, schema) {
+  const r = await gh(token, `/repos/${repo}/contents/${encodeURI(path)}?ref=${encodeURIComponent(branch)}`);
+  if (!r?.content) return;
+  let remote;
+  try {
+    const bytes = Uint8Array.from(atob(r.content.replace(/\s/g, '')), (ch) => ch.charCodeAt(0));
+    remote = JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return;
+  }
+  if ((remote.schema || 1) !== (schema || 1)) {
+    throw new Error('The website was updated after you opened this page. Please reload the admin (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows) and make your change again. Nothing was overwritten.');
+  }
+}
+
 export async function publishContent(token, cfg, content, onStep) {
   const { repo, branch, contentPath } = cfg;
   onStep?.('Checking access…');
   await checkAccess(token, repo);
+  await assertSameSchema(token, repo, branch, contentPath, content.schema);
   const withImages = await uploadImages(token, repo, branch, content, onStep);
   onStep?.('Publishing content…');
   await putFile(token, repo, branch, contentPath, b64(JSON.stringify(withImages, null, 2) + '\n'), 'admin: update site content');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll } from 'framer-motion';
 import { useRange } from '@/components/Motion';
 import {
@@ -18,6 +18,7 @@ import {
 import { useContent, waLink, sec } from '@/lib/content';
 import { Reveal, Stagger, Item, SplitWords, ScrubText, CountUp } from '@/components/Motion';
 import FadeImg from '@/components/FadeImg';
+import { WORK_FILTER_EVENT, categoriesOf, catsOf, matchWork, norm, resolveFilter } from '@/lib/workFilter';
 
 const ICONS = {
   briefcase: MdBusinessCenter,
@@ -79,109 +80,6 @@ export function Audiences() {
             );
           })}
         </Stagger>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- The Range — store-style product grid ---------------- */
-function ProductCard({ g, wa }) {
-  const variants = g.variants?.length ? g.variants : [{ name: '', hex: g.color || '#ccc', image: g.image }];
-  const [sel, setSel] = useState(0);
-  const [hover, setHover] = useState(null);
-  const v = variants[hover ?? sel];
-  const msg = `Hi! I'm interested in the ${g.name}${v.name ? ` in ${v.name}` : ''}. Could you send me a quote?`;
-  return (
-    <div className="product">
-      <div className="p-media">
-        {g.tag && <span className="p-tag">{g.tag}</span>}
-        <AnimatePresence initial={false}>
-          <motion.img
-            key={v.image}
-            src={v.image}
-            alt={`${g.name}${v.name ? ` — ${v.name}` : ''}`}
-            loading="lazy"
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.45, ease: EASE }}
-          />
-        </AnimatePresence>
-        <a className="p-quick" href={waLink(wa, msg)} target="_blank" rel="noreferrer">
-          Enquire on WhatsApp
-        </a>
-      </div>
-      <div className="p-info">
-        <div className="p-row">
-          <h3 className="p-name">{g.name}</h3>
-          <span className="p-price">From {g.from?.replace(/^From\s*/i, '')}</span>
-        </div>
-        <p className="p-fabric">{g.fabric}</p>
-        {variants.length > 1 && (
-          <div className="p-swatches" onMouseLeave={() => setHover(null)}>
-            {variants.map((vv, k) => (
-              <button
-                key={vv.name + k}
-                className="p-sw"
-                style={{ background: vv.hex }}
-                aria-label={vv.name}
-                aria-pressed={k === sel}
-                onMouseEnter={() => setHover(k)}
-                onClick={() => setSel(k)}
-              />
-            ))}
-            <span className="p-color">{v.name}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export function Garments() {
-  const c = useContent();
-  const cats = ['All', ...Array.from(new Set(c.garments.map((g) => g.category).filter(Boolean)))];
-  const [cat, setCat] = useState('All');
-  const list = c.garments.filter((g) => cat === 'All' || g.category === cat);
-  return (
-    <section className="section" id="garments" data-theme="light" style={{ paddingTop: 0 }}>
-      <div className="container">
-        <div className="section-head split" style={{ marginBottom: 28 }}>
-          <div>
-            <Reveal>
-              <p className="eyebrow">{sec(c, 'garments').eyebrow}</p>
-            </Reveal>
-            <SplitWords as="h2" className="h1" text={sec(c, 'garments').title} />
-          </div>
-          <Reveal>
-            <p className="lead" style={{ maxWidth: 380, marginTop: 0 }}>{sec(c, 'garments').lead}</p>
-          </Reveal>
-        </div>
-        <div className="shop-tabs" role="tablist">
-          {cats.map((k) => (
-            <button key={k} role="tab" aria-selected={cat === k} onClick={() => setCat(k)}>
-              {k}
-              {cat === k && <motion.span layoutId="shop-tab" className="tab-line" />}
-            </button>
-          ))}
-        </div>
-        <motion.div layout className="products">
-          <AnimatePresence mode="popLayout">
-            {list.map((g, i) => (
-              <motion.div
-                key={g.name}
-                layout
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                viewport={{ once: false, amount: 0.2 }}
-                transition={{ duration: 0.8, delay: (i % 3) * 0.08, ease: EASE }}
-              >
-                <ProductCard g={g} wa={c.contact.whatsapp} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
       </div>
     </section>
   );
@@ -351,10 +249,24 @@ export function Process() {
 /* ---------------- Works gallery ---------------- */
 export function Works() {
   const c = useContent();
-  const cats = ['All', ...Array.from(new Set(c.works.map((w) => w.category).filter(Boolean)))];
-  const [cat, setCat] = useState('All');
+  const works = c.works || [];
+  const cats = useMemo(() => categoriesOf(works), [works]);
+  const [filter, setFilter] = useState('All');
   const [open, setOpen] = useState(null);
-  const list = c.works.filter((w) => cat === 'All' || w.category === cat);
+  const catsRef = useRef(cats);
+  catsRef.current = cats;
+
+  // category tiles and footer links ask for a filter through this event
+  useEffect(() => {
+    const on = (e) => setFilter(resolveFilter(e.detail, catsRef.current));
+    window.addEventListener(WORK_FILTER_EVENT, on);
+    return () => window.removeEventListener(WORK_FILTER_EVENT, on);
+  }, []);
+
+  const list = works.filter((w) => matchWork(w, filter, cats));
+  const extra = filter !== 'All' && !cats.some((x) => norm(x) === norm(filter)) ? filter : null; // a keyword from a tile
+  const chips = ['All', ...cats, ...(extra ? [extra] : [])];
+  const isActive = (k) => (k === 'All' ? filter === 'All' : norm(k) === norm(filter));
   return (
     <section className="section" id="work" data-theme="light" style={{ background: 'var(--surface-1)' }}>
       <div className="container">
@@ -366,9 +278,9 @@ export function Works() {
             <SplitWords as="h2" className="h1" text={sec(c, 'works').title} />
           </div>
           <Reveal className="chips">
-            {cats.map((k) => (
-              <button key={k} className="chip" aria-pressed={cat === k} onClick={() => setCat(k)}>
-                {cat === k && <MdCheck size={16} />}
+            {chips.map((k) => (
+              <button key={k} className="chip" aria-pressed={isActive(k)} onClick={() => setFilter(k)}>
+                {isActive(k) && <MdCheck size={16} />}
                 {k}
               </button>
             ))}
@@ -390,7 +302,7 @@ export function Works() {
               >
                 {w.image && <FadeImg src={w.image} alt={w.title} loading="lazy" />}
                 <div className="work-meta">
-                  <small>{[w.category, w.year].filter(Boolean).join(' · ')}</small>
+                  <small>{[catsOf(w).join(' · '), w.year].filter(Boolean).join(' · ')}</small>
                   <h3 className="h3">{w.title}</h3>
                   {(w.client || w.quantity) && <p className="work-sub">{[w.client, w.quantity && `${w.quantity} pcs`].filter(Boolean).join(' — ')}</p>}
                 </div>
@@ -398,6 +310,14 @@ export function Works() {
             ))}
           </AnimatePresence>
         </motion.div>
+        {list.length === 0 && filter !== 'All' && (
+          <div className="works-empty">
+            <p>No “{filter}” jobs added yet.</p>
+            <a className="link" href={waLink(c.contact.whatsapp, `Hi ${c.brand.name}! Could you show me examples of ${filter}?`)} target="_blank" rel="noreferrer">
+              Ask us for examples <MdArrowForward />
+            </a>
+          </div>
+        )}
       </div>
       <AnimatePresence>
         {open && (

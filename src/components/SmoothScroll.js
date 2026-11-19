@@ -9,6 +9,7 @@ export default function SmoothScroll({ children }) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     if (new URLSearchParams(location.search).has('nosmooth')) return;
     const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, anchors: { offset: -56 } });
+    window.__mrLenis = lenis;
     let id;
     const raf = (t) => {
       lenis.raf(t);
@@ -18,6 +19,7 @@ export default function SmoothScroll({ children }) {
     return () => {
       cancelAnimationFrame(id);
       lenis.destroy();
+      delete window.__mrLenis;
     };
   }, []);
   return children;

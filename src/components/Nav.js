@@ -6,7 +6,6 @@ import { MdMenu, MdClose } from 'react-icons/md';
 import { useContent, waLink } from '@/lib/content';
 
 const LINKS = [
-  ['The range', '#garments'],
   ['Our work', '#work'],
   ['Materials', '#materials'],
   ['Finishes', '#finishes'],

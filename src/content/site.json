@@ -26,7 +26,6 @@
     "subtitle": "For corporate teams and events. Your logo embroidered or printed on premium polos and tees, from 10 pieces to 10,000.",
     "primaryButton": "Start your order",
     "whatsappButton": "WhatsApp us",
-    "rangeLink": "Explore the range in 20+ colours",
     "lookbook": [
       {
         "image": "/uploads/1795093772444-0.webp",
@@ -100,7 +99,8 @@
         "bgColor": "#ffffff",
         "alt": "Navy long sleeve polo"
       }
-    ]
+    ],
+    "workLink": "See our recent work"
   },
   "stats": [
     {
@@ -154,178 +154,6 @@
       "title": "Campaigns & NGOs",
       "text": "Bulk tees for awareness drives, runs and volunteers.",
       "icon": "heart"
-    }
-  ],
-  "garments": [
-    {
-      "name": "Signature Polo",
-      "category": "Polos",
-      "fabric": "Cotton piqué · 220 GSM",
-      "from": "LKR 2,200",
-      "tag": "Best seller",
-      "image": "/images/range/signature-polo.webp",
-      "variants": [
-        {
-          "name": "Navy",
-          "hex": "#1d2a44",
-          "image": "/images/range/v/signature-navy.webp"
-        },
-        {
-          "name": "Black",
-          "hex": "#1a1a1c",
-          "image": "/images/range/v/signature-black.webp"
-        },
-        {
-          "name": "White",
-          "hex": "#f1f0ec",
-          "image": "/images/range/v/signature-white.webp"
-        },
-        {
-          "name": "Red",
-          "hex": "#b3261e",
-          "image": "/images/range/v/signature-red.webp"
-        },
-        {
-          "name": "Royal",
-          "hex": "#2a56c6",
-          "image": "/images/range/v/signature-royal.webp"
-        },
-        {
-          "name": "Forest",
-          "hex": "#0f6b4f",
-          "image": "/images/range/v/signature-forest.webp"
-        }
-      ]
-    },
-    {
-      "name": "Tipped Polo",
-      "category": "Polos",
-      "fabric": "Cotton piqué · contrast tipping",
-      "from": "LKR 2,500",
-      "tag": "Corporate",
-      "image": "/images/range/tipped-polo.webp",
-      "variants": [
-        {
-          "name": "Royal / White",
-          "hex": "#2a56c6",
-          "image": "/images/range/v/tipped-royal.webp"
-        },
-        {
-          "name": "Red / White",
-          "hex": "#c8202a",
-          "image": "/images/range/v/tipped-red.webp"
-        },
-        {
-          "name": "Navy / Gold",
-          "hex": "#1d2a44",
-          "image": "/images/range/v/tipped-navy.webp"
-        },
-        {
-          "name": "Grey / Navy",
-          "hex": "#8e9198",
-          "image": "/images/range/v/tipped-grey.webp"
-        }
-      ]
-    },
-    {
-      "name": "Dri-Fit Polo",
-      "category": "Polos",
-      "fabric": "Polyester mesh · 160 GSM",
-      "from": "LKR 1,900",
-      "tag": "Sports & events",
-      "image": "/images/range/drifit-polo.webp",
-      "variants": [
-        {
-          "name": "Forest",
-          "hex": "#0f6b4f",
-          "image": "/images/range/v/drifit-forest.webp"
-        },
-        {
-          "name": "Black / Orange",
-          "hex": "#1a1a1c",
-          "image": "/images/range/v/drifit-black.webp"
-        },
-        {
-          "name": "Royal",
-          "hex": "#2a56c6",
-          "image": "/images/range/v/drifit-royal.webp"
-        }
-      ]
-    },
-    {
-      "name": "Event Crew Tee",
-      "category": "T-shirts",
-      "fabric": "Combed cotton · 180 GSM",
-      "from": "LKR 1,500",
-      "tag": "Events",
-      "image": "/images/range/crew-tee.webp",
-      "variants": [
-        {
-          "name": "Red",
-          "hex": "#b3261e",
-          "image": "/images/range/v/tee-red.webp"
-        },
-        {
-          "name": "Black",
-          "hex": "#1a1a1c",
-          "image": "/images/range/v/tee-black.webp"
-        },
-        {
-          "name": "White",
-          "hex": "#f1f0ec",
-          "image": "/images/range/v/tee-white.webp"
-        },
-        {
-          "name": "Sunflower",
-          "hex": "#f2b632",
-          "image": "/images/range/v/tee-sun.webp"
-        },
-        {
-          "name": "Royal",
-          "hex": "#2a56c6",
-          "image": "/images/range/v/tee-royal.webp"
-        }
-      ]
-    },
-    {
-      "name": "Long Sleeve Polo",
-      "category": "Polos",
-      "fabric": "Cotton piqué · 220 GSM",
-      "from": "LKR 2,600",
-      "tag": "Uniforms",
-      "image": "/images/range/long-sleeve-polo.webp",
-      "variants": [
-        {
-          "name": "White / Navy",
-          "hex": "#ecebe6",
-          "image": "/images/range/v/long-white.webp"
-        },
-        {
-          "name": "Navy / White",
-          "hex": "#1d2a44",
-          "image": "/images/range/v/long-navy.webp"
-        },
-        {
-          "name": "Black",
-          "hex": "#1a1a1c",
-          "image": "/images/range/v/long-black.webp"
-        }
-      ]
-    },
-    {
-      "name": "Executive Polo",
-      "category": "Polos",
-      "fabric": "Mercerised cotton · 240 GSM",
-      "from": "LKR 2,800",
-      "tag": "Premium",
-      "image": "/images/range/executive-polo.webp",
-      "variants": [
-        {
-          "name": "Black / Silver",
-          "hex": "#1e1e20",
-          "image": "/images/range/executive-polo.webp"
-        }
-      ]
     }
   ],
   "materials": [
@@ -654,14 +482,14 @@
       "sub": "Piqué, dri-fit & tipped",
       "image": "/uploads/1795089962524-0.webp",
       "fit": "contain",
-      "link": "#garments"
+      "filter": "Polos"
     },
     {
       "label": "crew neck T-shirts",
       "sub": "Crew & event tees",
       "image": "/uploads/1795089966379-1.webp",
       "fit": "contain",
-      "link": "#garments"
+      "filter": "T-shirts"
     }
   ],
   "ticker": [
@@ -680,11 +508,6 @@
       "eyebrow": "Who we make for",
       "title": "One partner for every team you dress.",
       "lead": "From a 10-piece startup order to thousands of event tees, we handle the fabric, finish and delivery so you don't have to."
-    },
-    "garments": {
-      "eyebrow": "The range",
-      "title": "Pick your garment. We'll make it yours.",
-      "lead": "Every style comes in your choice of colours, with your logo embroidered or printed."
     },
     "materials": {
       "eyebrow": "Materials",
@@ -724,5 +547,15 @@
       "title": "Ready when your team is.",
       "lead": "Share your logo and quantity. We'll send a mock-up and price today."
     }
+  },
+  "schema": 2,
+  "quoteOptions": {
+    "garments": [
+      "Polo shirts",
+      "Crew-neck T-shirts",
+      "Sport jerseys",
+      "Long-sleeve shirts",
+      "Other / not sure"
+    ]
   }
 }

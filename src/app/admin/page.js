@@ -33,8 +33,7 @@ const GROUPS = [
     ['ticker', 'Scrolling ticker'],
     ['sections', 'Headings & intro text'],
   ]],
-  ['Shop', [
-    ['garments', 'Products, prices & colours'],
+  ['Fabrics & finishes', [
     ['materials', 'Materials'],
     ['techniques', 'Finishes'],
   ]],
@@ -50,6 +49,7 @@ const GROUPS = [
   ['Business', [
     ['brand', 'Brand & logo'],
     ['contact', 'Contact details'],
+    ['quoteOptions', 'Quote form choices'],
     ['socials', 'Social media'],
     ['imageguide', 'Image size guide'],
     ['settings', 'Settings & publish'],
@@ -60,9 +60,8 @@ const ENUMS = { fit: [['cover', 'Photo (fills the tile)'], ['contain', 'Product 
 const isImageKey = (k) => k === 'image' || k === 'logo' || /Image$/.test(k);
 
 const TEMPLATES = {
-  categories: { label: '', sub: '', image: '', fit: 'cover', link: '#garments' },
+  categories: { label: '', sub: '', image: '', fit: 'cover', filter: '' },
   ticker: '',
-  garments: { name: '', category: 'Polos', fabric: '', from: 'LKR 0', tag: '', image: '', variants: [{ name: '', hex: '#888888', image: '' }] },
   testimonials: { quote: '', name: '', role: '' },
   works: { title: '', client: '', category: '', quantity: '', year: '', text: '', image: '' },
   lookbook: { image: '', fit: 'cover', bgColor: '#dddddd', alt: '' },
@@ -70,7 +69,16 @@ const TEMPLATES = {
 };
 
 const LONG = ['text', 'quote', 'a', 'description', 'subtitle', 'title', 'q'];
-const pretty = (k) => k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
+const LABELS = {
+  filter: 'Portfolio filter',
+  category: 'Categories (separate several with commas)',
+  workLink: 'Link under the buttons',
+};
+const HINTS = {
+  filter: 'What visitors see when they click this tile: the Our work section, filtered to jobs whose Category or Title contains this word. Examples: Polos, T-shirts, sport jersey. Leave empty to use the tile name.',
+  category: 'Visitors can filter Our work by these. Use commas to list a job under more than one filter, for example: Corporate polo, Polos.',
+};
+const pretty = (k) => LABELS[k] || k.replace(/([A-Z])/g, ' $1').replace(/^./, (s) => s.toUpperCase());
 const clone = (o) => JSON.parse(JSON.stringify(o));
 function blank(v) {
   if (Array.isArray(v)) return [];
@@ -89,8 +97,6 @@ const SPEC = {
   heroCutout: { id: 'heroCutout', title: 'Hero gallery: product cut-out', where: 'Homepage hero, moving photo gallery', w: 1000, h: 1250, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Centre the garment and leave about 8% empty space around it. Pick the tile background colour below.' },
   catPhoto: { id: 'catPhoto', title: 'Category tile: photo', where: 'Homepage, the four tiles under the hero', w: 900, h: 1200, shape: '3:4 portrait', fit: 'cover', fmt: PHOTO, size: 'under 300 KB', tip: 'Keep the main subject in the middle. Using a product cut-out instead? Set "Image style" (below) to Product cut-out.' },
   catCutout: { id: 'catCutout', title: 'Category tile: product cut-out', where: 'Homepage, the four tiles under the hero', w: 900, h: 1200, shape: '3:4 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Centre the garment with some empty space around it.' },
-  product: { id: 'product', title: 'Product: main picture', where: 'The range, product card', w: 900, h: 1125, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Use the same angle, size and position for every product so the grid looks even.' },
-  productColour: { id: 'productColour', title: 'Product: colour picture', where: 'The range, shown when this colour is picked', w: 900, h: 1125, shape: '4:5 portrait', fit: 'contain', alpha: true, fmt: CUTOUT, size: 'under 250 KB', tip: 'Match the main picture exactly (same angle, size and position) so the colour change looks smooth.' },
   work: { id: 'work', title: 'Our work: portfolio photo', where: 'Our work grid and the pop-up viewer', w: 1200, h: 1500, shape: '4:5 portrait (square also works)', fit: 'free', fmt: PHOTO, size: 'under 400 KB', tip: 'Any height works. Keep the width at 1200 px or more.' },
   finish: { id: 'finish', title: 'Finish: card picture', where: 'Finishes section, card picture', w: 1600, h: 1000, shape: '16:10 landscape', fit: 'cover', fmt: PHOTO, size: 'under 350 KB', tip: 'Leave this empty on Embroidery and Screen Printing to keep their animated illustration.' },
   logo: { id: 'logo', title: 'Logo', where: 'Top bar, footer and admin', w: 240, h: 127, shape: 'wide, about 1.9:1', fit: 'contain', alpha: true, fmt: 'PNG with a transparent background', size: 'under 100 KB', tip: 'It is shown only about 30 px tall, so this size is plenty. The opening animation uses its own logo pieces and does not change when you replace this.' },
@@ -98,8 +104,6 @@ const SPEC = {
 const SPEC_BY_PATH = {
   'hero.lookbook[].image': (sib) => (sib?.fit === 'contain' ? SPEC.heroCutout : SPEC.heroPhoto),
   'categories[].image': (sib) => (sib?.fit === 'contain' ? SPEC.catCutout : SPEC.catPhoto),
-  'garments[].image': () => SPEC.product,
-  'garments[].variants[].image': () => SPEC.productColour,
   'works[].image': () => SPEC.work,
   'techniques[].image': () => SPEC.finish,
   'brand.logo': () => SPEC.logo,
@@ -353,12 +357,13 @@ function Field({ name, value, onChange, template, path, siblings }) {
     <label className="a-field">
       <span>{pretty(name)}</span>
       {long ? <textarea rows={3} value={v} onChange={(e) => onChange(e.target.value)} /> : <input value={v} onChange={(e) => onChange(e.target.value)} />}
+      {HINTS[name] && <small className="a-hint">{HINTS[name]}</small>}
     </label>
   );
 }
 
 function ObjectEditor({ value, onChange, skip = [], path = '' }) {
-  const NESTED = { lookbook: TEMPLATES.lookbook, variants: TEMPLATES.garments.variants[0] };
+  const NESTED = { lookbook: TEMPLATES.lookbook };
   return (
     <div className="a-grid">
       {Object.entries(value)

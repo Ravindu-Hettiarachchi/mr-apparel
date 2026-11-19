@@ -31,7 +31,7 @@ export default function Quote() {
     name: '',
     company: '',
     phone: '',
-    garment: c.garments[0]?.name || '',
+    garment: (c.quoteOptions?.garments || [])[0] || '',
     finish: c.techniques[0]?.name || '',
     qty: '50',
     date: '',
@@ -145,15 +145,15 @@ export default function Quote() {
               <div className="field">
                 <label htmlFor="q-garment">Garment</label>
                 <select id="q-garment" value={f.garment} onChange={set('garment')}>
-                  {c.garments.map((g) => (
-                    <option key={g.name}>{g.name}</option>
+                  {(c.quoteOptions?.garments || []).map((g) => (
+                    <option key={g}>{g}</option>
                   ))}
                 </select>
               </div>
               <div className="field">
                 <label htmlFor="q-finish">Finish</label>
                 <select id="q-finish" value={f.finish} onChange={set('finish')}>
-                  {c.techniques.map((t) => (
+                  {(c.techniques || []).filter((t) => t.name?.trim()).map((t) => (
                     <option key={t.name}>{t.name}</option>
                   ))}
                   <option>Not sure yet</option>
