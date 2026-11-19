@@ -478,22 +478,13 @@
   ],
   "works": [
     {
-      "title": "Executive Uniform Program",
-      "category": "Corporate",
-      "text": "Embroidered piqué polos for a 300-person team.",
+      "title": "Uniform Program",
+      "category": "Corporate polo",
+      "text": "Embroidered piqué polos for a 30-person team.",
       "image": "/uploads/1795069781227-0.jpg",
       "client": "cool master ref service",
       "quantity": "30",
       "year": "2025"
-    },
-    {
-      "title": "Urban Streetwear Launch",
-      "category": "DTF",
-      "text": "Full-colour DTF prints for a brand launch drop.",
-      "image": "/images/works-showcase.jpg",
-      "client": "",
-      "quantity": "",
-      "year": ""
     },
     {
       "title": "The Infinite Print Series",
@@ -530,6 +521,15 @@
       "client": "",
       "quantity": "",
       "year": ""
+    },
+    {
+      "title": "Uniform Program",
+      "client": "green gate plantation",
+      "category": "Corporate polo",
+      "quantity": "50",
+      "year": "2026",
+      "text": "Embroidered baby piqué polos for a 30- person team",
+      "image": "/uploads/1795070198373-0.jpg"
     }
   ],
   "testimonials": [],
