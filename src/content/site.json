@@ -430,6 +430,32 @@
         "bulkValue": 98,
         "softFeel": 76
       }
+    },
+    {
+      "name": "",
+      "text": "",
+      "best": "",
+      "durability": "",
+      "image": "",
+      "scores": {
+        "detail": 0,
+        "durability": 0,
+        "bulkValue": 0,
+        "softFeel": 0
+      }
+    },
+    {
+      "name": "",
+      "text": "",
+      "best": "",
+      "durability": "",
+      "image": "",
+      "scores": {
+        "detail": 0,
+        "durability": 0,
+        "bulkValue": 0,
+        "softFeel": 0
+      }
     }
   ],
   "quality": [
@@ -487,40 +513,13 @@
       "year": "2025"
     },
     {
-      "title": "The Infinite Print Series",
-      "category": "Sublimation",
-      "text": "All-over sublimated polyester tees.",
-      "image": "/images/sublimation-showcase.jpg",
-      "client": "",
-      "quantity": "",
-      "year": ""
-    },
-    {
-      "title": "Event Crew Kits",
-      "category": "Events",
-      "text": "Crew and volunteer tees delivered in five days.",
-      "image": "/images/hero-banner.jpg",
-      "client": "",
-      "quantity": "",
-      "year": ""
-    },
-    {
-      "title": "Retail Collection",
-      "category": "Retail",
-      "text": "Private-label tees for a retail partner.",
-      "image": "/images/store-product.jpg",
-      "client": "",
-      "quantity": "",
-      "year": ""
-    },
-    {
-      "title": "DTF Production Run",
-      "category": "DTF",
-      "text": "High-detail transfers ready for pressing.",
-      "image": "/images/dtf-process.jpg",
-      "client": "",
-      "quantity": "",
-      "year": ""
+      "title": "school t shirts",
+      "category": "Corporate polo",
+      "text": "",
+      "image": "/uploads/1795070413733-0.jpg",
+      "client": "kingswood college hostel",
+      "quantity": "125",
+      "year": "2026"
     },
     {
       "title": "Uniform Program",
@@ -530,6 +529,15 @@
       "year": "2026",
       "text": "Embroidered baby piqué polos for a 30- person team",
       "image": "/uploads/1795070198373-0.jpg"
+    },
+    {
+      "title": "",
+      "client": "",
+      "category": "",
+      "quantity": "",
+      "year": "",
+      "text": "",
+      "image": ""
     }
   ],
   "testimonials": [],
