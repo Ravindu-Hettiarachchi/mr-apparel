@@ -588,23 +588,23 @@
   "testimonials": [],
   "faq": [
     {
-      "q": "What is the minimum order quantity?",
+      "q": "What is the minimum order quantity ?",
       "a": "Orders start from 10 pieces. Larger quantities unlock better per-piece pricing."
     },
     {
-      "q": "How long does production take?",
-      "a": "Most orders are ready in 7 – 14 working days after sample approval. Rush orders are possible on request."
+      "q": "How long does production take ?",
+      "a": "Most orders are ready in 10 – 14 working days after sample approval. Rush orders are possible on request."
     },
     {
-      "q": "Can you match our brand colours?",
+      "q": "Can you match our brand colours ?",
       "a": "Yes. We match fabric, thread and ink colours to your Pantone or HEX references."
     },
     {
-      "q": "Do you deliver outside Colombo?",
+      "q": "Do you deliver outside matale ?",
       "a": "We deliver island-wide across Sri Lanka, and can arrange international shipping."
     },
     {
-      "q": "Can I see a sample first?",
+      "q": "Can I see a sample first ?",
       "a": "Absolutely. We produce a physical sample for approval before every bulk run."
     }
   ],
