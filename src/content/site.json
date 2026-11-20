@@ -331,7 +331,7 @@
   "materials": [
     {
       "name": "Cotton Piqué",
-      "gsm": "200 – 240 GSM",
+      "gsm": "190 – 240 GSM",
       "feel": "Textured, breathable, structured",
       "best": "Corporate polos, uniforms",
       "care": "Pre-shrunk, colour-fast",
@@ -342,27 +342,15 @@
       }
     },
     {
-      "name": "Mercerised Cotton",
-      "gsm": "220 – 260 GSM",
-      "feel": "Silky sheen, smooth hand",
-      "best": "Executive & management wear",
-      "care": "Low pilling, holds colour",
+      "name": "Cotton Piqué (poliyester Piqué)",
+      "gsm": "180 GSM",
+      "feel": "Soft, smooth, breathable, lightweight",
+      "best": "Sports, indoor events",
+      "care": "\tQuick-drying, colour-retentive, easy-care",
       "scores": {
-        "breathability": 80,
-        "durability": 88,
-        "softness": 92
-      }
-    },
-    {
-      "name": "Dri-Fit Polyester",
-      "gsm": "140 – 180 GSM",
-      "feel": "Light, quick-dry, stretchy",
-      "best": "Sports, outdoor events",
-      "care": "Wrinkle-free, fast drying",
-      "scores": {
-        "breathability": 95,
-        "durability": 85,
-        "softness": 70
+        "breathability": 85,
+        "durability": 80,
+        "softness": 101
       }
     },
     {
