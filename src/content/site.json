@@ -342,7 +342,7 @@
       }
     },
     {
-      "name": "Cotton Piqué (poliyester Piqué)",
+      "name": "Baby Piqué (poliyester Piqué)",
       "gsm": "180 GSM",
       "feel": "Soft, smooth, breathable, lightweight",
       "best": "Sports, indoor events",
@@ -354,15 +354,27 @@
       }
     },
     {
-      "name": "CVC Blend (60/40)",
-      "gsm": "180 – 220 GSM",
-      "feel": "Soft, low shrink",
-      "best": "Budget-friendly bulk orders",
-      "care": "Easy care, minimal shrink",
+      "name": "wetlook",
+      "gsm": "140 – 160 GSM",
+      "feel": "Smooth, lightweight, slightly textured",
+      "best": "Sports T-shirts, sportswear, athletic uniforms",
+      "care": "\tQuick-drying, easy-care, low-heat ironing",
       "scores": {
-        "breathability": 78,
-        "durability": 86,
+        "breathability": 85,
+        "durability": 90,
         "softness": 80
+      }
+    },
+    {
+      "name": "Waffel Piqué",
+      "gsm": "180-220 Gsm",
+      "feel": "Textured, breathable, structured",
+      "best": "polos, team uniforms, premium sportswear",
+      "care": "Easy-care, shape-retaining, low-heat ironing",
+      "scores": {
+        "breathability": 85,
+        "durability": 90,
+        "softness": 95
       }
     }
   ],
